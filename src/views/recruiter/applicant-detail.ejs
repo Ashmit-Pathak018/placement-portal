@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <div class="header-actions">
+      <h1>Applicant: <%= application.name %></h1>
+      <a href="/recruiter/postings/<%= application.posting_id %>/applicants" class="btn">Back to Applicants</a>
+    </div>
+
+    <div class="profile-card">
+      <p><strong>Email:</strong> <%= application.email %></p>
+      <p><strong>Branch:</strong> <%= application.branch %></p>
+      <p><strong>CGPA:</strong> <%= application.cgpa %></p>
+      <p><strong>Graduation Year:</strong> <%= application.grad_year || 'N/A' %></p>
+      <% if (application.resume_url) { %>
+        <p><strong>Resume:</strong> <a href="<%= application.resume_url %>" target="_blank" class="btn btn-outline">View Resume</a></p>
+      <% } else { %>
+        <p><strong>Resume:</strong> Not provided</p>
+      <% } %>
+      <p><strong>Current Status:</strong> <span class="badge badge-<%= application.status %>"><%= application.status %></span></p>
+    </div>
+
+    <div class="status-update-section">
+      <h3>Update Status</h3>
+      <form action="/recruiter/applications/<%= application.id %>/status" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
+        <div>
+          <label>New Status</label>
+          <select name="status" required>
+            <option value="">Select...</option>
+            <% allowedTransitions.forEach(st => { %>
+              <option value="<%= st %>"><%= st.replace('_', ' ').toUpperCase() %></option>
+            <% }) %>
+          </select>
+        </div>
+        
+        <div>
+          <label>Note (Optional)</label>
+          <textarea name="note" rows="3" placeholder="Feedback or interview details..."></textarea>
+        </div>
+        
+        <button type="submit">Update Status</button>
+      </form>
+    </div>
+
+    <div class="application-history">
+      <h3>History</h3>
+      <% if (history && history.length > 0) { %>
+        <ul class="timeline">
+          <% history.forEach(entry => { %>
+            <li>
+              <strong><%= new Date(entry.changed_at).toLocaleString() %></strong> - 
+              Status changed to <span class="badge badge-<%= entry.status %>"><%= entry.status %></span>
+              <% if (entry.note) { %>
+                <br><em>Note: <%= entry.note %></em>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p>No history available.</p>
+      <% } %>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

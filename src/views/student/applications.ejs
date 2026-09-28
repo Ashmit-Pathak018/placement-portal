@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <h2>My Applications</h2>
+
+    <% if (applications && applications.length > 0) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Company</th>
+            <th>Applied Date</th>
+            <th>Status</th>
+            <th>Last Updated</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% applications.forEach(app => { %>
+            <tr>
+              <td><%= app.title %></td>
+              <td><%= app.company_name %></td>
+              <td><%= new Date(app.applied_at).toLocaleDateString() %></td>
+              <td><span class="badge status-<%= app.status %>"><%= app.status %></span></td>
+              <td><%= new Date(app.updated_at).toLocaleDateString() %></td>
+              <td><a href="/student/applications/<%= app.id %>" class="btn btn-sm btn-outline">View</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <div class="alert alert-info">
+        You haven't applied to any roles yet. <a href="/student/postings">Browse Postings</a>
+      </div>
+    <% } %>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

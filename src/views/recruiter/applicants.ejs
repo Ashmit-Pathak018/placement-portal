@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <style>
+    .kanban-board { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+    .kanban-column { flex: 0 0 250px; background: #f4f4f4; border-radius: 4px; padding: 10px; }
+    .kanban-column h3 { text-align: center; margin-top: 0; }
+    .kanban-list { min-height: 200px; }
+    .kanban-card { background: white; padding: 10px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: grab; }
+    .view-toggle { margin-bottom: 1rem; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <h1>Applicants for: <%= posting.title %></h1>
+    
+    <div class="view-toggle">
+      <button onclick="toggleView('table')" id="btn-table" class="btn">Table View</button>
+      <button onclick="toggleView('kanban')" id="btn-kanban" class="btn btn-outline">Kanban View</button>
+    </div>
+
+    <!-- Batch Actions -->
+    <div class="batch-actions" style="margin-bottom: 1rem; padding: 1rem; background: #eee; border-radius: 4px;">
+      <form action="/recruiter/applications/batch-status" method="POST" id="batch-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="postingId" value="<%= posting.id %>">
+        <label>Batch Status Update: </label>
+        <select name="newStatus" required>
+          <option value="">Select Status</option>
+          <% statuses.forEach(s => { %>
+            <option value="<%= s %>"><%= s.replace('_', ' ').toUpperCase() %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Update Selected</button>
+      </form>
+    </div>
+
+    <!-- Table View -->
+    <div id="table-view">
+      <% if (applicants && applicants.length > 0) { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th>Name</th>
+              <th>Branch</th>
+              <th>CGPA</th>
+              <th>Applied Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% applicants.forEach(app => { %>
+              <tr>
+                <td><input type="checkbox" name="applicationIds" value="<%= app.application_id %>" form="batch-form"></td>
+                <td><%= app.name %></td>
+                <td><%= app.branch %></td>
+                <td><%= app.cgpa %></td>
+                <td><%= new Date(app.applied_at).toLocaleDateString() %></td>
+                <td><span class="badge badge-<%= app.status %>"><%= app.status %></span></td>
+                <td>
+                  <a href="/recruiter/applicants/<%= app.application_id %>">View Details</a>
+                  <form action="/recruiter/applications/<%= app.application_id %>/status" method="POST" style="display:inline;">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <select name="status" onchange="this.form.submit()">
+                      <% statuses.forEach(s => { %>
+                        <option value="<%= s %>" <%= app.status === s ? 'selected' : '' %>><%= s %></option>
+                      <% }) %>
+                    </select>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No applicants yet.</p>
+      <% } %>
+    </div>
+
+    <!-- Kanban View -->
+    <div id="kanban-view" class="hidden">
+      <div class="kanban-board">
+        <% statuses.forEach(status => { %>
+          <div class="kanban-column">
+            <h3><%= status.replace('_', ' ').toUpperCase() %></h3>
+            <div class="kanban-list" data-status="<%= status %>">
+              <% applicants.filter(a => a.status === status).forEach(app => { %>
+                <div class="kanban-card" data-id="<%= app.application_id %>">
+                  <strong><a href="/recruiter/applicants/<%= app.application_id %>"><%= app.name %></a></strong>
+                  <div><%= app.branch %> | CGPA: <%= app.cgpa %></div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+  <script>
+    function toggleView(view) {
+      document.getElementById('table-view').classList.toggle('hidden', view !== 'table');
+      document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
+    }
+
+    document.getElementById('selectAll').addEventListener('change', function(e) {
+      const checkboxes = document.querySelectorAll('input[name="applicationIds"]');
+      checkboxes.forEach(cb => cb.checked = e.target.checked);
+    });
+
+    // Kanban Drag & Drop
+    const lists = document.querySelectorAll('.kanban-list');
+    lists.forEach(list => {
+      new Sortable(list, {
+        group: 'shared',
+        animation: 150,
+        onEnd: function(evt) {
+          const itemEl = evt.item;
+          const newStatus = evt.to.getAttribute('data-status');
+          const appId = itemEl.getAttribute('data-id');
+          
+          fetch(`/recruiter/applications/${appId}/status`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Accept': 'application/json'
+            },
+            body: new URLSearchParams({
+              _csrf: '<%= csrfToken %>',
+              status: newStatus
+            })
+          }).then(res => res.json()).then(data => {
+             // Handle success or revert
+          }).catch(err => {
+             console.error('Error updating status', err);
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

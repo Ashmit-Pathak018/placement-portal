@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <div class="application-header">
+      <h2><%= application.title %> @ <%= application.company_name %></h2>
+      <div class="current-status">
+        <h3>Current Status: <span class="badge status-<%= application.status %>" style="font-size: 1.2em;"><%= application.status.toUpperCase() %></span></h3>
+      </div>
+    </div>
+
+    <section class="card timeline-section" style="margin-top: 20px;">
+      <h3>Application Timeline</h3>
+      <% if (history && history.length > 0) { %>
+        <ul class="timeline">
+          <% history.forEach(item => { %>
+            <li class="timeline-item">
+              <div class="timeline-date"><%= new Date(item.changed_at).toLocaleString() %></div>
+              <div class="timeline-content">
+                <strong><%= item.from_status ? item.from_status + ' → ' : 'Status set to ' %> <%= item.to_status %></strong>
+                <% if (item.note) { %>
+                  <p><%= item.note %></p>
+                <% } %>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <p>No timeline history found.</p>
+      <% } %>
+    </section>
+
+    <div style="margin-top: 20px;">
+      <a href="/student/applications" class="btn btn-outline">&larr; Back to Applications</a>
+    </div>
+
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

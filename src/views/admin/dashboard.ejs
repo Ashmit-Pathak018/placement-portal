@@ -1,103 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> — CampusPlace</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <%- include('../partials/head') %>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
-  <main class="container">
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     <%- include('../partials/flash') %>
-    
-    <h1>Admin Dashboard</h1>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h3>Pending Companies</h3>
-        <p class="stat-number"><%= stats.pendingCompanies %></p>
-        <a href="/admin/companies/pending">Review Companies</a>
+    <!-- Admin Welcome Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Placement Cell Administration</h1>
+        <p class="text-xs text-slate-500 mt-1">Institutional oversight, recruiter vetting, posting authorizations, and audit compliance.</p>
       </div>
-      <div class="stat-card">
-        <h3>Pending Postings</h3>
-        <p class="stat-number"><%= stats.pendingPostings %></p>
-        <a href="/admin/postings/pending">Review Postings</a>
-      </div>
-      <div class="stat-card">
-        <h3>Total Applications</h3>
-        <p class="stat-number"><%= stats.totalApplications %></p>
-      </div>
-      <div class="stat-card">
-        <h3>Total Students</h3>
-        <p class="stat-number"><%= stats.totalStudents %></p>
+      <div class="flex items-center gap-2.5">
+        <a href="/admin/audit-logs" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-xs transition-colors">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-600"></i>
+          Audit Logs
+        </a>
       </div>
     </div>
 
-    <div class="charts-grid">
-      <div class="chart-container">
-        <h3>Placements by Branch</h3>
-        <canvas id="placementsChart"></canvas>
+    <!-- Prominent Pending Actions Alert Banner -->
+    <% if (stats.pendingCompanies > 0 || stats.pendingPostings > 0) { %>
+      <div class="bg-amber-500/10 border border-amber-300/80 rounded-2xl p-6 text-amber-950 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-amber-900">Pending Administrative Reviews Required</h3>
+            <p class="text-xs text-amber-800">
+              There are <strong class="text-amber-950"><%= stats.pendingCompanies %> company profile(s)</strong> and 
+              <strong class="text-amber-950"><%= stats.pendingPostings %> job posting(s)</strong> awaiting institutional review.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 shrink-0">
+          <% if (stats.pendingCompanies > 0) { %>
+            <a href="/admin/companies/pending"
+               class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5">
+              Review Companies (<%= stats.pendingCompanies %>)
+            </a>
+          <% } %>
+          <% if (stats.pendingPostings > 0) { %>
+            <a href="/admin/postings/pending"
+               class="px-3.5 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5">
+              Review Postings (<%= stats.pendingPostings %>)
+            </a>
+          <% } %>
+        </div>
       </div>
-      <div class="chart-container">
-        <h3>Applications Per Company</h3>
-        <canvas id="appsPerCompanyChart"></canvas>
+    <% } %>
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      
+      <!-- Pending Companies -->
+      <a href="/admin/companies/pending" class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 flex items-center justify-between hover:border-amber-300 transition-all group">
+        <div class="space-y-1">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Companies</span>
+          <div class="text-3xl font-extrabold text-amber-600 group-hover:text-amber-700"><%= stats.pendingCompanies %></div>
+          <span class="text-[11px] text-slate-400">Queue review &rarr;</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <i data-lucide="building" class="w-6 h-6"></i>
+        </div>
+      </a>
+
+      <!-- Pending Postings -->
+      <a href="/admin/postings/pending" class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 flex items-center justify-between hover:border-amber-300 transition-all group">
+        <div class="space-y-1">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Pending Postings</span>
+          <div class="text-3xl font-extrabold text-amber-600 group-hover:text-amber-700"><%= stats.pendingPostings %></div>
+          <span class="text-[11px] text-slate-400">Authorization queue &rarr;</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+          <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+        </div>
+      </a>
+
+      <!-- Total Applications -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Applications</span>
+          <div class="text-3xl font-extrabold text-slate-900"><%= stats.totalApplications %></div>
+          <span class="text-[11px] text-slate-400">Submitted candidates</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+          <i data-lucide="users" class="w-6 h-6"></i>
+        </div>
       </div>
-      <div class="chart-container">
-        <h3>Average CGPA of Offered Students</h3>
-        <canvas id="avgCgpaChart"></canvas>
+
+      <!-- Total Students -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Students</span>
+          <div class="text-3xl font-extrabold text-slate-900"><%= stats.totalStudents %></div>
+          <span class="text-[11px] text-slate-400">Registered on portal</span>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Analytics Dashboard Charts (Chart.js) -->
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-600"></i>
+          Placement Ecosystem Analytics
+        </h2>
+        <span class="text-xs text-slate-400">Real-time database metrics</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Placements by Branch -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 space-y-4">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-900">Offers by Department</h3>
+            <p class="text-[11px] text-slate-400">Students with 'offered' status across branches</p>
+          </div>
+          <div class="relative h-60">
+            <canvas id="placementsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Applications per Company -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 space-y-4">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-900">Applications per Company</h3>
+            <p class="text-[11px] text-slate-400">Candidate interest volume by recruiter</p>
+          </div>
+          <div class="relative h-60">
+            <canvas id="appsPerCompanyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Average CGPA of Offered Candidates -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 space-y-4">
+          <div class="space-y-1">
+            <h3 class="text-sm font-bold text-slate-900">Average CGPA of Placed Students</h3>
+            <p class="text-[11px] text-slate-400">Average CGPA cutoff achieved for offers</p>
+          </div>
+          <div class="relative h-60">
+            <canvas id="avgCgpaChart"></canvas>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <script>
-      const chartsData = <%- JSON.stringify(charts) %>;
-
-      // Placements by Branch
-      new Chart(document.getElementById('placementsChart'), {
-        type: 'bar',
-        data: {
-          labels: chartsData.placementsByBranch.map(d => d.branch),
-          datasets: [{
-            label: 'Offered Students',
-            data: chartsData.placementsByBranch.map(d => d.count),
-            backgroundColor: 'rgba(54, 162, 235, 0.5)'
-          }]
-        }
-      });
-
-      // Applications Per Company
-      new Chart(document.getElementById('appsPerCompanyChart'), {
-        type: 'bar',
-        data: {
-          labels: chartsData.applicationsPerCompany.map(d => d.company),
-          datasets: [{
-            label: 'Applications',
-            data: chartsData.applicationsPerCompany.map(d => d.count),
-            backgroundColor: 'rgba(255, 99, 132, 0.5)'
-          }]
-        },
-        options: {
-          indexAxis: 'y'
-        }
-      });
-
-      // Average CGPA
-      new Chart(document.getElementById('avgCgpaChart'), {
-        type: 'bar',
-        data: {
-          labels: chartsData.avgCgpaByBranch.map(d => d.branch),
-          datasets: [{
-            label: 'Average CGPA',
-            data: chartsData.avgCgpaByBranch.map(d => d.avgCgpa),
-            backgroundColor: 'rgba(75, 192, 192, 0.5)'
-          }]
-        }
-      });
-    </script>
-    
   </main>
+
   <%- include('../partials/footer') %>
   <script src="/js/app.js"></script>
+  <script>
+    const chartsData = <%- JSON.stringify(charts) %>;
+
+    // Common Chart Options
+    Chart.defaults.font.family = '"Plus Jakarta Sans", Inter, sans-serif';
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = '#64748b';
+
+    // 1. Placements by Branch
+    new Chart(document.getElementById('placementsChart'), {
+      type: 'bar',
+      data: {
+        labels: chartsData.placementsByBranch.map(d => d.branch),
+        datasets: [{
+          label: 'Offers',
+          data: chartsData.placementsByBranch.map(d => d.count),
+          backgroundColor: '#4f46e5',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    // 2. Applications per Company
+    new Chart(document.getElementById('appsPerCompanyChart'), {
+      type: 'bar',
+      data: {
+        labels: chartsData.applicationsPerCompany.map(d => d.company),
+        datasets: [{
+          label: 'Applications',
+          data: chartsData.applicationsPerCompany.map(d => d.count),
+          backgroundColor: '#0ea5e9',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    // 3. Avg CGPA of Placed Students
+    new Chart(document.getElementById('avgCgpaChart'), {
+      type: 'bar',
+      data: {
+        labels: chartsData.avgCgpaByBranch.map(d => d.branch),
+        datasets: [{
+          label: 'Avg CGPA',
+          data: chartsData.avgCgpaByBranch.map(d => d.avgCgpa),
+          backgroundColor: '#10b981',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { min: 0, max: 10, grid: { color: '#f1f5f9' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  </script>
 </body>
 </html>

@@ -2,12 +2,18 @@ const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const { getDb } = require('../db');
-const { getUnreadCount } = require('../services/notifications');
+const { getUnreadCount, getNotifications } = require('../services/notifications');
 
 // GET /api/notifications/unread-count
 router.get('/notifications/unread-count', isAuthenticated, (req, res) => {
   const count = getUnreadCount(req.session.user.id);
   res.json({ count });
+});
+
+// GET /api/notifications — recent notifications for dropdown
+router.get('/notifications', isAuthenticated, (req, res) => {
+  const notifications = getNotifications(req.session.user.id, { limit: 6 });
+  res.json({ notifications });
 });
 
 // GET /api/applications/status — returns current statuses for a student's applications

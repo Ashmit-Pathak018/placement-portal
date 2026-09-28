@@ -1,104 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> — CampusPlace</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <%- include('../partials/head') %>
 </head>
-<body>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
-  <main class="container">
-    <%- include('../partials/flash') %>
-    
-    <h1>Audit Logs</h1>
 
-    <div class="filters card">
-      <form action="/admin/audit-logs" method="GET" class="filter-form">
-        <div class="form-group">
-          <label>Entity Type</label>
-          <select name="entity_type" class="form-control">
-            <option value="">All</option>
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <%- include('../partials/flash') %>
+
+    <!-- Header & CSV Export -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Placement Cell Audit Logs</h1>
+        <p class="text-xs text-slate-500 mt-1">Immutable administrative transaction trail with reviewer IDs, actions, reasons, and timestamps.</p>
+      </div>
+
+      <a href="/admin/audit-logs/export.csv?entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors self-start sm:self-auto">
+        <i data-lucide="download" class="w-3.5 h-3.5 text-brand-600"></i>
+        Export to CSV
+      </a>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-5">
+      <form action="/admin/audit-logs" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 items-end">
+        
+        <!-- Entity Type -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Entity Scope</label>
+          <select name="entity_type"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+            <option value="">All Entities</option>
             <option value="company" <%= filters.entity_type === 'company' ? 'selected' : '' %>>Company</option>
-            <option value="posting" <%= filters.entity_type === 'posting' ? 'selected' : '' %>>Posting</option>
-            <option value="application" <%= filters.entity_type === 'application' ? 'selected' : '' %>>Application</option>
+            <option value="posting" <%= filters.entity_type === 'posting' ? 'selected' : '' %>>Job Posting</option>
           </select>
         </div>
-        
-        <div class="form-group">
-          <label>Action</label>
-          <select name="action" class="form-control">
-            <option value="">All</option>
+
+        <!-- Action -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Action Type</label>
+          <select name="action"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+            <option value="">All Actions</option>
             <option value="approved" <%= filters.action === 'approved' ? 'selected' : '' %>>Approved</option>
             <option value="rejected" <%= filters.action === 'rejected' ? 'selected' : '' %>>Rejected</option>
-            <option value="created" <%= filters.action === 'created' ? 'selected' : '' %>>Created</option>
-            <option value="updated" <%= filters.action === 'updated' ? 'selected' : '' %>>Updated</option>
-            <option value="deleted" <%= filters.action === 'deleted' ? 'selected' : '' %>>Deleted</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Start Date</label>
-          <input type="date" name="startDate" class="form-control" value="<%= filters.startDate || '' %>">
+        <!-- Start Date -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">From Date</label>
+          <input type="date" name="startDate" value="<%= filters.startDate || '' %>"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
         </div>
 
-        <div class="form-group">
-          <label>End Date</label>
-          <input type="date" name="endDate" class="form-control" value="<%= filters.endDate || '' %>">
+        <!-- End Date -->
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">To Date</label>
+          <input type="date" name="endDate" value="<%= filters.endDate || '' %>"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
         </div>
 
-        <button type="submit" class="btn btn-primary">Filter</button>
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2">
+          <button type="submit"
+            class="flex-1 py-2 px-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+            Filter
+          </button>
+          <a href="/admin/audit-logs"
+            class="py-2 px-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors text-center">
+            Reset
+          </a>
+        </div>
+
       </form>
     </div>
 
-    <div class="actions" style="margin-bottom: 20px;">
-      <a href="/admin/audit-logs/export.csv?entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-secondary">Export to CSV</a>
-    </div>
+    <!-- Audit Event Log Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-hidden">
+      <% if (logs && logs.length > 0) { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                <th class="py-3.5 px-6">Timestamp</th>
+                <th class="py-3.5 px-4">Admin Reviewer</th>
+                <th class="py-3.5 px-4">Entity Type</th>
+                <th class="py-3.5 px-4">Entity ID</th>
+                <th class="py-3.5 px-4">Action</th>
+                <th class="py-3.5 px-6">Review Reason / Note</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-xs font-mono">
+              <% logs.forEach(log => { %>
+                <tr class="hover:bg-slate-50/60 transition-colors">
+                  <td class="py-3.5 px-6 font-sans text-slate-600 whitespace-nowrap">
+                    <%= new Date(log.created_at).toLocaleString() %>
+                  </td>
+                  <td class="py-3.5 px-4 font-sans whitespace-nowrap">
+                    <span class="font-medium text-slate-900"><%= log.admin_email || 'Placement Admin' %></span>
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap uppercase text-[10px] tracking-wider text-slate-500 font-bold">
+                    <%= log.entity_type %>
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap text-slate-700">
+                    #<%= log.entity_id %>
+                  </td>
+                  <td class="py-3.5 px-4 whitespace-nowrap font-sans">
+                    <span class="badge <%= log.action === 'approved' ? 'badge-approved' : 'badge-rejected' %>">
+                      <span class="badge-dot"></span>
+                      <%= log.action %>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-6 font-sans text-slate-700 max-w-xs truncate">
+                    <%= log.reason || '-' %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
 
-    <% if (logs.length === 0) { %>
-      <p>No audit logs found.</p>
-    <% } else { %>
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Admin Email</th>
-            <th>Entity Type</th>
-            <th>Entity ID</th>
-            <th>Action</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% logs.forEach(log => { %>
-            <tr>
-              <td><%= new Date(log.created_at).toLocaleString() %></td>
-              <td><%= log.admin_email || 'System' %></td>
-              <td><%= log.entity_type %></td>
-              <td><%= log.entity_id %></td>
-              <td><span class="badge badge-<%= log.action %>"><%= log.action %></span></td>
-              <td><%= log.reason || '-' %></td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
+        <!-- Pagination Controls -->
+        <% if (pagination && pagination.totalPages > 1) { %>
+          <div class="p-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>
+              Page <strong class="text-slate-900"><%= pagination.currentPage %></strong> of <strong class="text-slate-900"><%= pagination.totalPages %></strong>
+              (<%= pagination.total %> total events)
+            </span>
 
-      <% if (pagination.totalPages > 1) { %>
-        <div class="pagination">
-          <% if (pagination.currentPage > 1) { %>
-            <a href="?page=<%= pagination.currentPage - 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-sm btn-outline">&laquo; Prev</a>
-          <% } %>
-          
-          <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
-          
-          <% if (pagination.currentPage < pagination.totalPages) { %>
-            <a href="?page=<%= pagination.currentPage + 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-sm btn-outline">Next &raquo;</a>
-          <% } %>
+            <div class="flex items-center gap-2">
+              <% if (pagination.currentPage > 1) { %>
+                <a href="?page=<%= pagination.currentPage - 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
+                  class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-semibold shadow-xs transition-colors flex items-center gap-1">
+                  <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Previous
+                </a>
+              <% } %>
+
+              <% if (pagination.currentPage < pagination.totalPages) { %>
+                <a href="?page=<%= pagination.currentPage + 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
+                  class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-semibold shadow-xs transition-colors flex items-center gap-1">
+                  Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </a>
+              <% } %>
+            </div>
+          </div>
+        <% } %>
+
+      <% } else { %>
+        <div class="p-12 text-center space-y-4">
+          <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900">No Audit Events Logged</h3>
+          <p class="text-xs text-slate-500 max-w-sm mx-auto">Administrative company approvals and posting authorizations will automatically generate audit logs here.</p>
         </div>
       <% } %>
-    <% } %>
+    </div>
 
   </main>
+
   <%- include('../partials/footer') %>
   <script src="/js/app.js"></script>
 </body>

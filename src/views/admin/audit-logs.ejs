@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <h1>Audit Logs</h1>
+
+    <div class="filters card">
+      <form action="/admin/audit-logs" method="GET" class="filter-form">
+        <div class="form-group">
+          <label>Entity Type</label>
+          <select name="entity_type" class="form-control">
+            <option value="">All</option>
+            <option value="company" <%= filters.entity_type === 'company' ? 'selected' : '' %>>Company</option>
+            <option value="posting" <%= filters.entity_type === 'posting' ? 'selected' : '' %>>Posting</option>
+            <option value="application" <%= filters.entity_type === 'application' ? 'selected' : '' %>>Application</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Action</label>
+          <select name="action" class="form-control">
+            <option value="">All</option>
+            <option value="approved" <%= filters.action === 'approved' ? 'selected' : '' %>>Approved</option>
+            <option value="rejected" <%= filters.action === 'rejected' ? 'selected' : '' %>>Rejected</option>
+            <option value="created" <%= filters.action === 'created' ? 'selected' : '' %>>Created</option>
+            <option value="updated" <%= filters.action === 'updated' ? 'selected' : '' %>>Updated</option>
+            <option value="deleted" <%= filters.action === 'deleted' ? 'selected' : '' %>>Deleted</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Start Date</label>
+          <input type="date" name="startDate" class="form-control" value="<%= filters.startDate || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label>End Date</label>
+          <input type="date" name="endDate" class="form-control" value="<%= filters.endDate || '' %>">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </form>
+    </div>
+
+    <div class="actions" style="margin-bottom: 20px;">
+      <a href="/admin/audit-logs/export.csv?entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-secondary">Export to CSV</a>
+    </div>
+
+    <% if (logs.length === 0) { %>
+      <p>No audit logs found.</p>
+    <% } else { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Admin Email</th>
+            <th>Entity Type</th>
+            <th>Entity ID</th>
+            <th>Action</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(log => { %>
+            <tr>
+              <td><%= new Date(log.created_at).toLocaleString() %></td>
+              <td><%= log.admin_email || 'System' %></td>
+              <td><%= log.entity_type %></td>
+              <td><%= log.entity_id %></td>
+              <td><span class="badge badge-<%= log.action %>"><%= log.action %></span></td>
+              <td><%= log.reason || '-' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <% if (pagination.totalPages > 1) { %>
+        <div class="pagination">
+          <% if (pagination.currentPage > 1) { %>
+            <a href="?page=<%= pagination.currentPage - 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-sm btn-outline">&laquo; Prev</a>
+          <% } %>
+          
+          <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
+          
+          <% if (pagination.currentPage < pagination.totalPages) { %>
+            <a href="?page=<%= pagination.currentPage + 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>" class="btn btn-sm btn-outline">Next &raquo;</a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

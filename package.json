@@ -1,0 +1,31 @@
+{
+  "name": "placement-portal",
+  "version": "1.0.0",
+  "description": "Campus Placement & Internship Portal — role-based recruitment platform",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "db:init": "node src/db/init.js",
+    "seed": "node src/db/seed.js",
+    "seed:reset": "node src/db/seed.js --reset",
+    "test": "jest --verbose"
+  },
+  "keywords": ["placement", "campus", "recruitment", "portal"],
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.3.0",
+    "connect-flash": "^0.1.1",
+    "csurf": "^1.11.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

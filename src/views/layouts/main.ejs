@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' — ' : '' %>CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <% if (typeof extraHead !== 'undefined') { %><%- extraHead %><% } %>
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+
+  <main class="container">
+    <%- include('../partials/flash') %>
+    <%- body %>
+  </main>
+
+  <%- include('../partials/footer') %>
+
+  <% if (typeof extraScripts !== 'undefined') { %><%- extraScripts %><% } %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

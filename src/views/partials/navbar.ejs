@@ -1,0 +1,40 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="/" class="navbar-brand">🎓 CampusPlace</a>
+
+    <div class="navbar-links">
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+
+        <% if (currentUser.role === 'student') { %>
+          <a href="/student/dashboard">Dashboard</a>
+          <a href="/student/postings">Browse Jobs</a>
+          <a href="/student/applications">My Applications</a>
+          <a href="/student/profile">Profile</a>
+        <% } else if (currentUser.role === 'recruiter') { %>
+          <a href="/recruiter/company">Company</a>
+          <a href="/recruiter/postings">Postings</a>
+        <% } else if (currentUser.role === 'admin') { %>
+          <a href="/admin/dashboard">Dashboard</a>
+          <a href="/admin/companies/pending">Companies</a>
+          <a href="/admin/postings/pending">Postings</a>
+          <a href="/admin/audit-logs">Audit Logs</a>
+        <% } %>
+
+        <div class="navbar-right">
+          <span class="navbar-user" id="notification-bell">
+            🔔 <span id="unread-count" class="badge" style="display:none;">0</span>
+          </span>
+          <span class="navbar-user"><%= currentUser.email %> (<%= currentUser.role %>)</span>
+          <form action="/logout" method="POST" class="navbar-logout-form">
+            <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+            <button type="submit" class="btn btn-sm btn-outline">Logout</button>
+          </form>
+        </div>
+
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

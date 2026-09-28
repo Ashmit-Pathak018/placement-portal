@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <% if (!company) { %>
+      <h1>Create Company Profile</h1>
+      <form action="/recruiter/company" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+          <label>Company Name</label>
+          <input type="text" name="name" required>
+        </div>
+        <div>
+          <label>Website</label>
+          <input type="url" name="website">
+        </div>
+        <div>
+          <label>Description</label>
+          <textarea name="description" rows="4"></textarea>
+        </div>
+        <button type="submit">Create Company</button>
+      </form>
+    <% } else { %>
+      <h1>My Company Profile</h1>
+      <div class="company-details">
+        <p><strong>Name:</strong> <%= company.name %></p>
+        <p><strong>Website:</strong> <a href="<%= company.website %>" target="_blank"><%= company.website %></a></p>
+        <p><strong>Description:</strong> <%= company.description %></p>
+        <p><strong>Status:</strong> 
+          <span class="badge badge-<%= company.status %>"><%= company.status %></span>
+        </p>
+      </div>
+      <a href="/recruiter/company/edit" class="btn">Edit Profile</a>
+    <% } %>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <div class="header-actions">
+      <h1>My Postings</h1>
+      <% if (company && company.status === 'approved') { %>
+        <a href="/recruiter/postings/new" class="btn">Create New Posting</a>
+      <% } else if (company && company.status !== 'approved') { %>
+        <p class="notice">Your company profile is currently <%= company.status %>. Postings can only be created once approved.</p>
+      <% } %>
+    </div>
+
+    <% if (postings && postings.length > 0) { %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Min CGPA</th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th>Applicants</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% postings.forEach(posting => { %>
+            <tr>
+              <td><%= posting.title %></td>
+              <td><span class="badge"><%= posting.type %></span></td>
+              <td><%= posting.min_cgpa %></td>
+              <td><%= posting.deadline ? new Date(posting.deadline).toLocaleDateString() : 'N/A' %></td>
+              <td><span class="badge badge-<%= posting.status %>"><%= posting.status %></span></td>
+              <td><%= posting.applicant_count %></td>
+              <td>
+                <a href="/recruiter/postings/<%= posting.id %>/applicants">View Applicants</a> | 
+                <a href="/recruiter/postings/<%= posting.id %>/edit">Edit</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>No postings found.</p>
+    <% } %>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

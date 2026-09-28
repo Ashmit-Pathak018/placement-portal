@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <h2>Browse Postings</h2>
+
+    <form class="filter-bar" action="/student/postings" method="GET">
+      <input type="text" name="search" placeholder="Search title or company..." value="<%= filters.search || '' %>">
+      
+      <select name="branch">
+        <option value="">All Branches</option>
+        <% const branchOpts = ['CSE', 'ECE', 'EEE', 'ME', 'CE', 'IT', 'CHE', 'BT']; %>
+        <% branchOpts.forEach(b => { %>
+          <option value="<%= b %>" <%= filters.branch === b ? 'selected' : '' %>><%= b %></option>
+        <% }) %>
+      </select>
+
+      <select name="type">
+        <option value="">All Types</option>
+        <option value="job" <%= filters.type === 'job' ? 'selected' : '' %>>Job</option>
+        <option value="internship" <%= filters.type === 'internship' ? 'selected' : '' %>>Internship</option>
+      </select>
+
+      <button type="submit" class="btn">Filter</button>
+      <a href="/student/postings" class="btn btn-outline">Clear</a>
+    </form>
+
+    <div class="postings-list">
+      <% if (postings && postings.length > 0) { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Role & Company</th>
+              <th>Type</th>
+              <th>Min CGPA</th>
+              <th>Deadline</th>
+              <th>Eligible</th>
+              <th>Match Score</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% postings.forEach(posting => { %>
+              <tr>
+                <td>
+                  <strong><%= posting.title %></strong><br>
+                  <small><%= posting.company_name %></small>
+                </td>
+                <td><span class="badge"><%= posting.type %></span></td>
+                <td><%= posting.min_cgpa %></td>
+                <td><%= new Date(posting.deadline).toLocaleDateString() %></td>
+                <td>
+                  <% if (posting.eligible) { %>
+                    <span style="color: green;">✔️ Eligible</span>
+                  <% } else { %>
+                    <span style="color: red;">❌ Ineligible</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress" style="width: <%= posting.match_score %>%"></div>
+                  </div>
+                  <small><%= posting.match_score %>%</small>
+                </td>
+                <td>
+                  <a href="/student/postings/<%= posting.id %>" class="btn btn-sm btn-outline">Details</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No postings match your filters.</p>
+      <% } %>
+    </div>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

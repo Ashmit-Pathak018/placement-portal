@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> — CampusPlace</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/navbar') %>
+  <main class="container">
+    <%- include('../partials/flash') %>
+    
+    <h2>My Profile</h2>
+
+    <% if (!student.name || !student.branch || !student.cgpa) { %>
+      <div class="alert alert-warning">
+        Your profile is incomplete. Please fill out all required fields to apply for jobs.
+      </div>
+    <% } %>
+
+    <form action="/student/profile" method="POST" class="form-container">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" value="<%= student.name || '' %>" required>
+      </div>
+
+      <div class="form-group">
+        <label for="branch">Branch</label>
+        <select id="branch" name="branch" required>
+          <option value="">Select Branch...</option>
+          <% const branchOptions = ['CSE', 'ECE', 'EEE', 'ME', 'CE', 'IT', 'CHE', 'BT']; %>
+          <% branchOptions.forEach(b => { %>
+            <option value="<%= b %>" <%= student.branch === b ? 'selected' : '' %>><%= b %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="cgpa">CGPA</label>
+        <input type="number" id="cgpa" name="cgpa" step="0.01" min="0" max="10" value="<%= student.cgpa || '' %>" required>
+      </div>
+
+      <div class="form-group">
+        <label for="grad_year">Graduation Year</label>
+        <input type="number" id="grad_year" name="grad_year" min="2000" max="2100" value="<%= student.grad_year || '' %>" required>
+      </div>
+
+      <div class="form-group">
+        <label for="resume_url">Resume URL</label>
+        <input type="url" id="resume_url" name="resume_url" value="<%= student.resume_url || '' %>">
+        <small>Provide a valid URL to your online resume (e.g., Google Drive link).</small>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save Profile</button>
+    </form>
+  </main>
+  <%- include('../partials/footer') %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

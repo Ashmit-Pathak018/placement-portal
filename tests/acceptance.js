@@ -102,11 +102,16 @@ async function runAcceptanceChecks() {
 
   // Check 2: Students never see pending/rejected postings or companies
   console.log('Test 2: Students never see pending/rejected postings or companies...');
+  const { getDb } = require('../src/db');
+  const db = getDb();
+  db.prepare("INSERT OR REPLACE INTO companies (id, recruiter_id, name, status) VALUES (999, 3, 'Pending Secret Corp', 'pending')").run();
+  db.prepare("INSERT OR REPLACE INTO job_postings (id, company_id, title, deadline, status) VALUES (999, 999, 'Pending Secret Job', '2026-12-31', 'pending')").run();
+
   const s1 = new TestClient();
   await s1.login('student1@campus.edu', 'Student@123');
   const postingsPage = await s1.request({ path: '/student/postings' });
-  if (!postingsPage.body.includes('DevOps Engineer') && !postingsPage.body.includes('Globex Corporation')) {
-    console.log('✓ PASS: Pending posting (DevOps Engineer) and pending company (Globex) are invisible to student');
+  if (!postingsPage.body.includes('Pending Secret Job') && !postingsPage.body.includes('Pending Secret Corp')) {
+    console.log('✓ PASS: Pending posting (Pending Secret Job) and pending company (Pending Secret Corp) are invisible to student');
   } else {
     throw new Error('FAIL: Student can see pending postings or companies!');
   }
@@ -139,14 +144,16 @@ async function runAcceptanceChecks() {
 
   // Check 5: Every admin approve/reject creates an audit row with reviewer ID + timestamp
   console.log('Test 5: Transactional admin audit logging...');
+  db.prepare("INSERT OR REPLACE INTO job_postings (id, company_id, title, deadline, status) VALUES (888, 1, 'Audit Target Posting', '2026-12-31', 'pending')").run();
+
   const admin = new TestClient();
   await admin.login('admin@campus.edu', 'Admin@123');
   const pendingPostingsPage = await admin.request({ path: '/admin/postings/pending' });
   const adminCsrf = admin.extractCsrf(pendingPostingsPage.body);
 
-  // Approve posting #3 (DevOps Engineer)
+  // Approve posting #888
   await admin.request(
-    { path: '/admin/postings/3/review', method: 'POST' },
+    { path: '/admin/postings/888/review', method: 'POST' },
     `_csrf=${encodeURIComponent(adminCsrf)}&action=approved&reason=Verified+by+Placement+Head`
   );
 

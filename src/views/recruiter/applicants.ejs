@@ -4,7 +4,7 @@
   <%- include('../partials/head') %>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+<body class="min-h-screen flex flex-col page-bg text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -13,7 +13,7 @@
     <!-- Back to Postings Navigation -->
     <div>
       <a href="/recruiter/postings" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <i class="ph-bold ph-arrow-left w-3.5 h-3.5"></i>
         Back to All Postings
       </a>
     </div>
@@ -40,12 +40,12 @@
         <div class="flex items-center bg-slate-100 p-1 rounded-xl self-start md:self-auto border border-slate-200/80">
           <button type="button" onclick="switchView('table')" id="btn-view-table"
             class="px-4 py-2 text-xs font-bold rounded-lg transition-all flex items-center gap-1.5 bg-white text-slate-900 shadow-xs">
-            <i data-lucide="table" class="w-3.5 h-3.5"></i>
+            <i class="ph-bold ph-table w-3.5 h-3.5"></i>
             Table View
           </button>
           <button type="button" onclick="switchView('kanban')" id="btn-view-kanban"
             class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all flex items-center gap-1.5">
-            <i data-lucide="kanban" class="w-3.5 h-3.5"></i>
+            <i class="ph-bold ph-kanban w-3.5 h-3.5"></i>
             Kanban Board
           </button>
         </div>
@@ -56,7 +56,7 @@
     <div id="batch-actions-bar" class="hidden bg-slate-900 text-white rounded-2xl p-4 shadow-elevated transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <div class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-brand-300">
-          <i data-lucide="check-square" class="w-4 h-4"></i>
+          <i class="ph-bold ph-check-square w-4 h-4"></i>
         </div>
         <div class="text-xs">
           Selected: <strong id="batch-selected-count" class="text-white text-sm font-bold ml-1">0</strong> candidates
@@ -172,7 +172,7 @@
       <% } else { %>
         <div class="p-12 text-center space-y-4">
           <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-            <i data-lucide="users" class="w-6 h-6"></i>
+            <i class="ph-bold ph-users w-6 h-6"></i>
           </div>
           <h3 class="text-base font-bold text-slate-900">No Candidates Applied Yet</h3>
           <p class="text-xs text-slate-500 max-w-sm mx-auto">When eligible students submit applications for this role, they will appear here in your tracking pipeline.</p>
@@ -314,11 +314,10 @@
       if (!toastBox) return;
       toastBox.className = `p-3 rounded-xl text-xs font-medium flex items-center gap-2 shadow-sm ${type === 'success' ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-rose-50 border border-rose-200 text-rose-900'}`;
       toastBox.innerHTML = `
-        <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4 ${type === 'success' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+        <i class="ph-bold ${type === 'success' ? 'ph-check-circle text-emerald-600' : 'ph-warning-circle text-rose-600'} w-4 h-4"></i>
         <span>${msg}</span>
       `;
       toastBox.classList.remove('hidden');
-      if (window.lucide) window.lucide.createIcons();
       setTimeout(() => toastBox.classList.add('hidden'), 4000);
     }
   </script>

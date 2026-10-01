@@ -15,7 +15,7 @@ router.get('/register', csrfProtection, (req, res) => {
 // POST /register
 router.post('/register', csrfProtection, [
   body('email').isEmail().withMessage('Valid email is required.').normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
+  body('password').isLength({ min: 6, max: 128 }).withMessage('Password must be between 6 and 128 characters.'),
   body('role').isIn(['student', 'recruiter']).withMessage('Role must be student or recruiter.'),
 ], handleValidationErrors, async (req, res) => {
   try {

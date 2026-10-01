@@ -81,11 +81,26 @@ router.get('/companies/pending', csrfProtection, (req, res) => {
   });
 });
 
+// Helper to sanitize CSV cells against Formula Injection (=, +, -, @)
+function sanitizeCsvCell(value) {
+  if (value === null || value === undefined) return '""';
+  let str = String(value);
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = "'" + str;
+  }
+  return `"${str.replace(/"/g, '""')}"`;
+}
+
 // POST /admin/companies/:id/review
 router.post('/companies/:id/review', csrfProtection, (req, res) => {
   const { action, reason } = req.body;
   const companyId = parseInt(req.params.id, 10);
   
+  if (isNaN(companyId)) {
+    req.flash('error', 'Invalid company ID.');
+    return res.redirect('/admin/companies/pending');
+  }
+
   if (!['approved', 'rejected'].includes(action)) {
     req.flash('error', 'Invalid action.');
     return res.redirect('/admin/companies/pending');
@@ -133,6 +148,11 @@ router.post('/postings/:id/review', csrfProtection, (req, res) => {
   const { action, reason } = req.body;
   const postingId = parseInt(req.params.id, 10);
   
+  if (isNaN(postingId)) {
+    req.flash('error', 'Invalid posting ID.');
+    return res.redirect('/admin/postings/pending');
+  }
+
   if (!['approved', 'rejected'].includes(action)) {
     req.flash('error', 'Invalid review action.');
     return res.redirect('/admin/postings/pending');
@@ -221,12 +241,12 @@ router.get('/audit-logs/export.csv', (req, res) => {
     
     logs.forEach(log => {
       csvRows.push([
-        log.created_at,
-        log.admin_email || 'System',
-        log.entity_type,
-        log.entity_id,
-        log.action,
-        `"${(log.reason || '').replace(/"/g, '""')}"`
+        sanitizeCsvCell(log.created_at),
+        sanitizeCsvCell(log.admin_email || 'System'),
+        sanitizeCsvCell(log.entity_type),
+        sanitizeCsvCell(log.entity_id),
+        sanitizeCsvCell(log.action),
+        sanitizeCsvCell(log.reason || '')
       ].join(','));
     });
 

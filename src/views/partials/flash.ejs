@@ -4,13 +4,13 @@
       <% messages.success.forEach(function(msg) { %>
         <div class="toast-alert flex items-start gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 shadow-sm transition-all duration-300">
           <div class="flex-shrink-0 text-emerald-600 mt-0.5">
-            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <i class="ph-bold ph-check-circle w-5 h-5"></i>
           </div>
           <div class="flex-1 text-sm font-medium leading-relaxed">
             <%= msg %>
           </div>
           <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800 transition-colors p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
+            <i class="ph-bold ph-x w-4 h-4"></i>
           </button>
         </div>
       <% }); %>
@@ -22,13 +22,13 @@
       <% messages.error.forEach(function(msg) { %>
         <div class="toast-alert flex items-start gap-3 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 shadow-sm transition-all duration-300">
           <div class="flex-shrink-0 text-rose-600 mt-0.5">
-            <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            <i class="ph-bold ph-warning-circle w-5 h-5"></i>
           </div>
           <div class="flex-1 text-sm font-medium leading-relaxed">
             <%= msg %>
           </div>
           <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-800 transition-colors p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
+            <i class="ph-bold ph-x w-4 h-4"></i>
           </button>
         </div>
       <% }); %>
@@ -40,13 +40,13 @@
       <% messages.info.forEach(function(msg) { %>
         <div class="toast-alert flex items-start gap-3 p-4 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 shadow-sm transition-all duration-300">
           <div class="flex-shrink-0 text-indigo-600 mt-0.5">
-            <i data-lucide="info" class="w-5 h-5"></i>
+            <i class="ph-bold ph-info w-5 h-5"></i>
           </div>
           <div class="flex-1 text-sm font-medium leading-relaxed">
             <%= msg %>
           </div>
           <button type="button" onclick="this.parentElement.remove()" class="text-indigo-500 hover:text-indigo-800 transition-colors p-1">
-            <i data-lucide="x" class="w-4 h-4"></i>
+            <i class="ph-bold ph-x w-4 h-4"></i>
           </button>
         </div>
       <% }); %>

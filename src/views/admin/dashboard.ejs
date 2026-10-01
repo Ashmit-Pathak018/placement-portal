@@ -4,7 +4,7 @@
   <%- include('../partials/head') %>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+<body class="min-h-screen flex flex-col page-bg text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -18,7 +18,7 @@
       </div>
       <div class="flex items-center gap-2.5">
         <a href="/admin/audit-logs" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-xs transition-colors">
-          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-600"></i>
+          <i class="ph-bold ph-shield-check w-3.5 h-3.5 text-brand-600"></i>
           Audit Logs
         </a>
       </div>
@@ -29,7 +29,7 @@
       <div class="bg-amber-500/10 border border-amber-300/80 rounded-2xl p-6 text-amber-950 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xs">
         <div class="flex items-start gap-4">
           <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            <i class="ph-bold ph-warning w-5 h-5"></i>
           </div>
           <div class="space-y-1">
             <h3 class="text-sm font-bold text-amber-900">Pending Administrative Reviews Required</h3>
@@ -68,7 +68,7 @@
           <span class="text-[11px] text-slate-400">Queue review &rarr;</span>
         </div>
         <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-          <i data-lucide="building" class="w-6 h-6"></i>
+          <i class="ph-bold ph-building w-6 h-6"></i>
         </div>
       </a>
 
@@ -80,7 +80,7 @@
           <span class="text-[11px] text-slate-400">Authorization queue &rarr;</span>
         </div>
         <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-          <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+          <i class="ph-bold ph-clipboard-check w-6 h-6"></i>
         </div>
       </a>
 
@@ -92,7 +92,7 @@
           <span class="text-[11px] text-slate-400">Submitted candidates</span>
         </div>
         <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
-          <i data-lucide="users" class="w-6 h-6"></i>
+          <i class="ph-bold ph-users w-6 h-6"></i>
         </div>
       </div>
 
@@ -104,7 +104,7 @@
           <span class="text-[11px] text-slate-400">Registered on portal</span>
         </div>
         <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
-          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          <i class="ph-bold ph-graduation-cap w-6 h-6"></i>
         </div>
       </div>
 
@@ -114,7 +114,7 @@
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-          <i data-lucide="bar-chart-3" class="w-4 h-4 text-brand-600"></i>
+          <i class="ph-bold ph-chart-bar w-4 h-4 text-brand-600"></i>
           Placement Ecosystem Analytics
         </h2>
         <span class="text-xs text-slate-400">Real-time database metrics</span>
@@ -163,10 +163,10 @@
   <%- include('../partials/footer') %>
   <script src="/js/app.js"></script>
   <script>
-    const chartsData = <%- JSON.stringify(charts) %>;
+    const chartsData = <%- JSON.stringify(charts).replace(/</g, '\\u003c') %>;
 
     // Common Chart Options
-    Chart.defaults.font.family = '"Plus Jakarta Sans", Inter, sans-serif';
+    Chart.defaults.font.family = '"DM Sans", system-ui, sans-serif';
     Chart.defaults.font.size = 11;
     Chart.defaults.color = '#64748b';
 

@@ -5,6 +5,20 @@ const { body, param, query, validationResult } = require('express-validator');
  * or as a factory returning middleware handleValidationErrors(redirectPath).
  */
 function handleValidationErrors(redirectPathOrReq, res, next) {
+  if (typeof redirectPathOrReq === 'function') {
+    const getRedirectPath = redirectPathOrReq;
+    return (req, res, next) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const messages = errors.array().map(e => e.msg);
+        req.flash('error', messages.join(' '));
+        const dest = getRedirectPath(req);
+        return res.redirect(dest.startsWith('/') ? dest : '/' + dest);
+      }
+      next();
+    };
+  }
+
   if (typeof redirectPathOrReq === 'string') {
     const redirectPath = redirectPathOrReq;
     return (req, res, next) => {

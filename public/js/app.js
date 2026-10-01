@@ -2,16 +2,7 @@
 (function () {
   'use strict';
 
-  // 1. Initialize Lucide Icons
-  function initIcons() {
-    if (window.lucide) {
-      window.lucide.createIcons();
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', () => {
-    initIcons();
-
     // 2. Mobile Menu Toggle
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');

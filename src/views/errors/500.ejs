@@ -8,16 +8,20 @@
 
   <main class="flex-1 flex items-center justify-center py-16 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full text-center space-y-6">
-      <div class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
-        <i class="ph-bold ph-compass w-8 h-8"></i>
+      <div class="w-16 h-16 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-sm">
+        <i class="ph-bold ph-warning-octagon w-8 h-8"></i>
       </div>
       <div>
-        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">404 — Page Not Found</h1>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">500 - Server Error</h1>
         <p class="mt-2 text-sm text-slate-600 leading-relaxed">
-          The recruitment portal page or resource you are looking for does not exist or may have been relocated.
+          An unexpected error occurred while processing your request. The engineering team has been alerted.
         </p>
       </div>
-      <div class="pt-2">
+      <div class="pt-2 flex justify-center gap-3">
+        <a href="javascript:history.back()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm">
+          <i class="ph-bold ph-arrow-left w-4 h-4"></i>
+          Go Back
+        </a>
         <a href="/" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm">
           <i class="ph-bold ph-house w-4 h-4"></i>
           Return Home

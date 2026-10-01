@@ -3,7 +3,7 @@
 <head>
   <%- include('../partials/head') %>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+<body class="min-h-screen flex flex-col page-bg text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -18,7 +18,7 @@
 
       <a href="/admin/audit-logs/export.csv?entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
         class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors self-start sm:self-auto">
-        <i data-lucide="download" class="w-3.5 h-3.5 text-brand-600"></i>
+        <i class="ph-bold ph-download-simple w-3.5 h-3.5 text-brand-600"></i>
         Export to CSV
       </a>
     </div>
@@ -67,7 +67,7 @@
         <div class="flex items-center gap-2">
           <button type="submit"
             class="flex-1 py-2 px-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5">
-            <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+            <i class="ph-bold ph-funnel w-3.5 h-3.5"></i>
             Filter
           </button>
           <a href="/admin/audit-logs"
@@ -136,14 +136,14 @@
               <% if (pagination.currentPage > 1) { %>
                 <a href="?page=<%= pagination.currentPage - 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
                   class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-semibold shadow-xs transition-colors flex items-center gap-1">
-                  <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Previous
+                  <i class="ph-bold ph-caret-left w-3.5 h-3.5"></i> Previous
                 </a>
               <% } %>
 
               <% if (pagination.currentPage < pagination.totalPages) { %>
                 <a href="?page=<%= pagination.currentPage + 1 %>&entity_type=<%= filters.entity_type || '' %>&action=<%= filters.action || '' %>&startDate=<%= filters.startDate || '' %>&endDate=<%= filters.endDate || '' %>"
                   class="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 font-semibold shadow-xs transition-colors flex items-center gap-1">
-                  Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  Next <i class="ph-bold ph-caret-right w-3.5 h-3.5"></i>
                 </a>
               <% } %>
             </div>
@@ -153,7 +153,7 @@
       <% } else { %>
         <div class="p-12 text-center space-y-4">
           <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
-            <i data-lucide="shield" class="w-6 h-6"></i>
+            <i class="ph-bold ph-shield w-6 h-6"></i>
           </div>
           <h3 class="text-base font-bold text-slate-900">No Audit Events Logged</h3>
           <p class="text-xs text-slate-500 max-w-sm mx-auto">Administrative company approvals and posting authorizations will automatically generate audit logs here.</p>

@@ -24,9 +24,9 @@ router.get('/company', (req, res) => {
 
 // POST /recruiter/company
 router.post('/company', [
-  body('name').trim().notEmpty().withMessage('Company name is required.'),
-  body('website').optional({ checkFalsy: true }).isURL().withMessage('Please provide a valid website URL.'),
-  body('description').optional(),
+  body('name').trim().notEmpty().isLength({ max: 100 }).withMessage('Company name is required (max 100 characters).'),
+  body('website').optional({ checkFalsy: true }).isURL({ protocols: ['http', 'https'], require_protocol: true }).withMessage('Please provide a valid website URL starting with http:// or https://.'),
+  body('description').optional().isLength({ max: 2000 }).withMessage('Description cannot exceed 2000 characters.'),
   handleValidationErrors('recruiter/company')
 ], (req, res) => {
   const db = getDb();
@@ -58,9 +58,9 @@ router.get('/company/edit', (req, res) => {
 
 // POST /recruiter/company/edit
 router.post('/company/edit', [
-  body('name').trim().notEmpty().withMessage('Company name is required.'),
-  body('website').optional({ checkFalsy: true }).isURL().withMessage('Please provide a valid website URL.'),
-  body('description').optional(),
+  body('name').trim().notEmpty().isLength({ max: 100 }).withMessage('Company name is required (max 100 characters).'),
+  body('website').optional({ checkFalsy: true }).isURL({ protocols: ['http', 'https'], require_protocol: true }).withMessage('Please provide a valid website URL starting with http:// or https://.'),
+  body('description').optional().isLength({ max: 2000 }).withMessage('Description cannot exceed 2000 characters.'),
   handleValidationErrors('recruiter/company-edit')
 ], (req, res) => {
   const db = getDb();
@@ -113,11 +113,11 @@ router.get('/postings/new', (req, res) => {
 
 // POST /recruiter/postings/new
 router.post('/postings/new', [
-  body('title').trim().notEmpty().withMessage('Title is required.'),
-  body('description').trim().notEmpty().withMessage('Description is required.'),
+  body('title').trim().notEmpty().isLength({ max: 150 }).withMessage('Title is required (max 150 characters).'),
+  body('description').trim().notEmpty().isLength({ max: 5000 }).withMessage('Description is required (max 5000 characters).'),
   body('type').isIn(['job', 'internship']).withMessage('Type must be job or internship.'),
   body('min_cgpa').isFloat({ min: 0, max: 10 }).withMessage('Minimum CGPA must be between 0 and 10.'),
-  body('deadline').notEmpty().withMessage('Application deadline is required.'),
+  body('deadline').isISO8601().withMessage('Application deadline must be a valid date (YYYY-MM-DD).'),
   handleValidationErrors('recruiter/postings/new')
 ], (req, res) => {
   const db = getDb();
@@ -179,11 +179,12 @@ router.get('/postings/:id/edit', (req, res) => {
 
 // POST /recruiter/postings/:id/edit
 router.post('/postings/:id/edit', [
-  body('title').trim().notEmpty().withMessage('Title is required.'),
-  body('description').trim().notEmpty().withMessage('Description is required.'),
+  body('title').trim().notEmpty().isLength({ max: 150 }).withMessage('Title is required (max 150 characters).'),
+  body('description').trim().notEmpty().isLength({ max: 5000 }).withMessage('Description is required (max 5000 characters).'),
   body('type').isIn(['job', 'internship']).withMessage('Type must be job or internship.'),
   body('min_cgpa').isFloat({ min: 0, max: 10 }).withMessage('Minimum CGPA must be between 0 and 10.'),
-  body('deadline').notEmpty().withMessage('Application deadline is required.'),
+  body('deadline').isISO8601().withMessage('Application deadline must be a valid date (YYYY-MM-DD).'),
+  handleValidationErrors(req => `/recruiter/postings/${req.params.id}/edit`)
 ], (req, res) => {
   const db = getDb();
   const company = getCompany(db, req.session.user.id);
@@ -349,6 +350,16 @@ router.post('/applications/batch-status', (req, res) => {
 
   if (!Array.isArray(applicationIds)) {
     applicationIds = [applicationIds];
+  }
+
+  // Parse and filter valid positive integer application IDs
+  applicationIds = applicationIds
+    .map(id => parseInt(id, 10))
+    .filter(id => !isNaN(id) && id > 0);
+
+  if (applicationIds.length === 0) {
+    req.flash('error', 'No valid applicants selected.');
+    return res.redirect(postingId ? `/recruiter/postings/${postingId}/applicants` : 'back');
   }
 
   // Verify ownership of every application

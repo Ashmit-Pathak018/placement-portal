@@ -7,11 +7,18 @@ const { getDb } = require('../db');
  * Approve or reject a company, with audit log in one transaction.
  */
 function reviewCompany(companyId, action, adminId, reason = '') {
+  if (!companyId || isNaN(companyId)) {
+    throw new Error('Invalid company ID.');
+  }
   if (!['approved', 'rejected'].includes(action)) {
     throw new Error('Invalid action. Must be "approved" or "rejected".');
   }
 
   const db = getDb();
+  const company = db.prepare('SELECT * FROM companies WHERE id = ?').get(companyId);
+  if (!company) {
+    throw new Error('Company not found.');
+  }
 
   const txn = db.transaction(() => {
     db.prepare(`
@@ -24,16 +31,13 @@ function reviewCompany(companyId, action, adminId, reason = '') {
     `).run(adminId, companyId, action, reason);
 
     // Notify the recruiter
-    const company = db.prepare('SELECT * FROM companies WHERE id = ?').get(companyId);
-    if (company) {
-      const msg = action === 'approved'
-        ? `Your company "${company.name}" has been approved by the placement cell.`
-        : `Your company "${company.name}" has been rejected. Reason: ${reason || 'Not specified'}.`;
-      db.prepare(`
-        INSERT INTO notifications (user_id, message, link)
-        VALUES (?, ?, ?)
-      `).run(company.recruiter_id, msg, '/recruiter/company');
-    }
+    const msg = action === 'approved'
+      ? `Your company "${company.name}" has been approved by the placement cell.`
+      : `Your company "${company.name}" has been rejected. Reason: ${reason || 'Not specified'}.`;
+    db.prepare(`
+      INSERT INTO notifications (user_id, message, link)
+      VALUES (?, ?, ?)
+    `).run(company.recruiter_id, msg, '/recruiter/company');
   });
 
   txn();
@@ -43,11 +47,23 @@ function reviewCompany(companyId, action, adminId, reason = '') {
  * Approve or reject a job posting, with audit log in one transaction.
  */
 function reviewPosting(postingId, action, adminId, reason = '') {
+  if (!postingId || isNaN(postingId)) {
+    throw new Error('Invalid posting ID.');
+  }
   if (!['approved', 'rejected'].includes(action)) {
     throw new Error('Invalid action. Must be "approved" or "rejected".');
   }
 
   const db = getDb();
+  const posting = db.prepare(`
+    SELECT jp.title, c.recruiter_id
+    FROM job_postings jp JOIN companies c ON jp.company_id = c.id
+    WHERE jp.id = ?
+  `).get(postingId);
+
+  if (!posting) {
+    throw new Error('Posting not found.');
+  }
 
   const txn = db.transaction(() => {
     db.prepare(`
@@ -60,21 +76,13 @@ function reviewPosting(postingId, action, adminId, reason = '') {
     `).run(adminId, postingId, action, reason);
 
     // Notify the recruiter via the company
-    const posting = db.prepare(`
-      SELECT jp.title, c.recruiter_id
-      FROM job_postings jp JOIN companies c ON jp.company_id = c.id
-      WHERE jp.id = ?
-    `).get(postingId);
-
-    if (posting) {
-      const msg = action === 'approved'
-        ? `Your posting "${posting.title}" has been approved and is now live.`
-        : `Your posting "${posting.title}" has been rejected. Reason: ${reason || 'Not specified'}.`;
-      db.prepare(`
-        INSERT INTO notifications (user_id, message, link)
-        VALUES (?, ?, ?)
-      `).run(posting.recruiter_id, msg, '/recruiter/postings');
-    }
+    const msg = action === 'approved'
+      ? `Your posting "${posting.title}" has been approved and is now live.`
+      : `Your posting "${posting.title}" has been rejected. Reason: ${reason || 'Not specified'}.`;
+    db.prepare(`
+      INSERT INTO notifications (user_id, message, link)
+      VALUES (?, ?, ?)
+    `).run(posting.recruiter_id, msg, '/recruiter/postings');
   });
 
   txn();

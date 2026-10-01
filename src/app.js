@@ -97,7 +97,7 @@ app.use((err, req, res, next) => {
     return res.redirect('back');
   }
   console.error('Unhandled error:', err);
-  res.status(500).render('errors/404', { title: 'Server Error' });
+  res.status(500).render('errors/500', { title: 'Server Error' });
 });
 
 // ---------- Start ----------

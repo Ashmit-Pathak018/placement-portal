@@ -5,12 +5,25 @@
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #0f172a;
-    background-color: #f8fafc;
   }
+}
+
+/* Page background with gradient mesh — defined outside @layer so it wins over Tailwind utilities */
+.page-bg {
+  background-color: #e8eaf4;
+  background-image:
+    radial-gradient(ellipse 70% 60% at 0% 0%, rgba(99, 102, 241, 0.30) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 50% at 100% 100%, rgba(139, 92, 246, 0.24) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 100% 0%, rgba(99, 102, 241, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 0% 100%, rgba(139, 92, 246, 0.10) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='1' cy='1' r='1' fill='%236366f1' fill-opacity='0.07'/%3E%3C/svg%3E");
+  background-attachment: fixed;
+  background-size: auto, auto, auto, auto, 32px 32px;
+  min-height: 100vh;
 }
 
 /* Custom Sleek Scrollbar */

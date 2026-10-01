@@ -3,7 +3,7 @@
 <head>
   <%- include('../partials/head') %>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+<body class="min-h-screen flex flex-col page-bg text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
 
   <main class="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -11,7 +11,7 @@
 
     <div>
       <a href="/recruiter/postings" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <i class="ph-bold ph-arrow-left w-3.5 h-3.5"></i>
         Back to Postings
       </a>
     </div>
@@ -129,7 +129,7 @@
             Cancel
           </a>
           <button type="submit" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow-sm transition-colors flex items-center gap-2">
-            <i data-lucide="check" class="w-4 h-4"></i>
+            <i class="ph-bold ph-check w-4 h-4"></i>
             <%= posting ? 'Save Changes' : 'Submit for Approval' %>
           </button>
         </div>

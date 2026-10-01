@@ -98,11 +98,11 @@ router.get('/profile', csrfProtection, (req, res) => {
 
 // POST /student/profile
 router.post('/profile', csrfProtection, [
-  body('name').trim().notEmpty().withMessage('Name is required.'),
+  body('name').trim().notEmpty().isLength({ max: 100 }).withMessage('Name is required (max 100 characters).'),
   body('branch').isIn(config.branches).withMessage('Please select a valid branch.'),
   body('cgpa').isFloat({ min: 0, max: 10 }).withMessage('CGPA must be a number between 0 and 10.'),
   body('grad_year').isInt({ min: 2000, max: 2100 }).withMessage('Valid graduation year is required.'),
-  body('resume_url').optional({ checkFalsy: true }).isURL().withMessage('Please provide a valid resume URL.'),
+  body('resume_url').optional({ checkFalsy: true }).isURL({ protocols: ['http', 'https'], require_protocol: true }).withMessage('Resume URL must be a valid http or https link.'),
   handleValidationErrors('student/profile')
 ], (req, res) => {
   const db = getDb();
@@ -226,6 +226,11 @@ router.post('/postings/:id/apply', csrfProtection, (req, res) => {
   const userId = req.session.user.id;
   const postingId = parseInt(req.params.id, 10);
 
+  if (isNaN(postingId) || postingId <= 0) {
+    req.flash('error', 'Invalid posting ID.');
+    return res.redirect('/student/postings');
+  }
+
   const gate = canApply(userId, postingId);
   if (!gate.allowed) {
     req.flash('error', gate.reasons.join(' '));
@@ -315,6 +320,14 @@ router.get('/applications/:id', csrfProtection, (req, res) => {
 // POST /student/what-if/:postingId (USP: What-if checker)
 router.post('/what-if/:postingId', csrfProtection, (req, res) => {
   const postingId = parseInt(req.params.postingId, 10);
+  if (isNaN(postingId) || postingId <= 0) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('application/json'))) {
+      return res.status(400).json({ eligible: false, reasons: ['Invalid posting ID.'] });
+    }
+    req.flash('error', 'Invalid posting ID.');
+    return res.redirect('/student/postings');
+  }
+
   const { cgpa, branch, grad_year } = req.body;
 
   const hypotheticalStudent = {

@@ -3,7 +3,7 @@
 <head>
   <%- include('../partials/head') %>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+<body class="min-h-screen flex flex-col page-bg text-slate-900 font-sans">
   <%- include('../partials/navbar') %>
 
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -12,7 +12,7 @@
     <!-- Back Navigation -->
     <div>
       <a href="/student/postings" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <i class="ph-bold ph-arrow-left w-3.5 h-3.5"></i>
         Back to Opportunities
       </a>
     </div>
@@ -26,12 +26,12 @@
               <%= posting.type %>
             </span>
             <span class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-              <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400"></i>
+              <i class="ph-bold ph-buildings w-3.5 h-3.5 text-slate-400"></i>
               <%= posting.company_name %>
             </span>
             <span class="text-xs text-slate-400">&bull;</span>
             <span class="text-xs text-rose-600 font-semibold flex items-center gap-1">
-              <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+              <i class="ph-bold ph-calendar w-3.5 h-3.5"></i>
               Deadline: <%= new Date(posting.deadline).toLocaleDateString() %>
             </span>
           </div>
@@ -66,7 +66,7 @@
         <!-- Job Description -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 sm:p-8 space-y-4">
           <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
+            <i class="ph-bold ph-file-text w-4 h-4 text-brand-600"></i>
             Role Description & Scope
           </h2>
           <div class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
@@ -77,7 +77,7 @@
         <!-- Key Academic Criteria -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 sm:p-8 space-y-4">
           <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-            <i data-lucide="check-square" class="w-4 h-4 text-brand-600"></i>
+            <i class="ph-bold ph-check-square w-4 h-4 text-brand-600"></i>
             Eligibility Requirements
           </h2>
 
@@ -116,7 +116,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 sm:p-8 space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <i data-lucide="pie-chart" class="w-4 h-4 text-brand-600"></i>
+              <i class="ph-bold ph-chart-pie-slice w-4 h-4 text-brand-600"></i>
               Why this match score?
             </h2>
             <span class="text-xs font-bold text-slate-700">Total: <%= match.score %>/100</span>
@@ -150,7 +150,7 @@
           <div class="flex items-center justify-between pb-4 border-b border-slate-100">
             <div class="flex items-center gap-2">
               <div class="w-8 h-8 rounded-xl <%= eligibility.eligible ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600' %> flex items-center justify-center">
-                <i data-lucide="<%= eligibility.eligible ? 'shield-check' : 'shield-alert' %>" class="w-5 h-5"></i>
+                <i class="ph-bold <%= eligibility.eligible ? 'ph-shield-check' : 'ph-shield-warning' %> w-5 h-5"></i>
               </div>
               <h2 class="text-base font-bold text-slate-900">Eligibility Status</h2>
             </div>
@@ -166,7 +166,7 @@
             <% if (eligibility.eligible) { %>
               <div class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200 text-emerald-900 text-xs space-y-1">
                 <div class="font-bold flex items-center gap-1.5 text-emerald-800">
-                  <i data-lucide="check" class="w-4 h-4 text-emerald-600"></i>
+                  <i class="ph-bold ph-check w-4 h-4 text-emerald-600"></i>
                   You meet all candidate requirements
                 </div>
                 <p class="text-emerald-700 text-[11px]">Your CGPA, department, and graduation batch satisfy the recruiter's criteria.</p>
@@ -174,7 +174,7 @@
             <% } else { %>
               <div class="p-4 rounded-xl bg-rose-50/80 border border-rose-200 text-rose-900 text-xs space-y-2">
                 <div class="font-bold flex items-center gap-1.5 text-rose-800">
-                  <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
+                  <i class="ph-bold ph-warning-circle w-4 h-4 text-rose-600"></i>
                   You are not eligible for this opportunity
                 </div>
                 <ul class="space-y-1 text-rose-700 text-[11px] list-disc pl-4">
@@ -191,7 +191,7 @@
             <% if (existingApp) { %>
               <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200 text-xs space-y-2 text-indigo-900">
                 <div class="font-bold flex items-center gap-1.5 text-indigo-800">
-                  <i data-lucide="check-circle" class="w-4 h-4 text-indigo-600"></i>
+                  <i class="ph-bold ph-check-circle w-4 h-4 text-indigo-600"></i>
                   Application Already Submitted
                 </div>
                 <p class="text-[11px] text-indigo-700">
@@ -208,7 +208,7 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <button type="submit"
                   class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm hover:shadow transition-all">
-                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <i class="ph-bold ph-paper-plane-tilt w-4 h-4"></i>
                   Submit Application Now
                 </button>
                 <p class="text-[11px] text-slate-400 text-center">Your academic profile will be transmitted directly to the recruiter.</p>
@@ -216,7 +216,7 @@
             <% } else { %>
               <button type="button" disabled
                 class="w-full py-3 px-4 rounded-xl bg-slate-100 text-slate-400 text-sm font-semibold cursor-not-allowed text-center border border-slate-200 flex items-center justify-center gap-2">
-                <i data-lucide="slash" class="w-4 h-4"></i>
+                <i class="ph-bold ph-minus w-4 h-4"></i>
                 Application Blocked (Ineligible)
               </button>
               <p class="text-[11px] text-slate-400 text-center mt-2">See what changes would make you eligible using the simulator below.</p>
@@ -228,7 +228,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-card p-6 sm:p-8 space-y-4">
           <div class="flex items-center gap-2.5 pb-3 border-b border-slate-100">
             <div class="w-8 h-8 rounded-xl bg-indigo-50 text-brand-600 flex items-center justify-center">
-              <i data-lucide="calculator" class="w-4 h-4"></i>
+              <i class="ph-bold ph-calculator w-4 h-4"></i>
             </div>
             <div>
               <h3 class="text-sm font-bold text-slate-900">What-If Eligibility Simulator</h3>
@@ -272,7 +272,7 @@
 
             <button type="submit"
               class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-1.5">
-              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <i class="ph-bold ph-play w-3.5 h-3.5"></i>
               Simulate Result
             </button>
           </form>
@@ -311,10 +311,16 @@
           const result = await res.json();
           whatIfResult.classList.remove('hidden');
 
+          function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+          }
+
           if (result.eligible) {
             whatIfResult.innerHTML = `
               <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-start gap-2">
-                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                <i class="ph-bold ph-check-circle w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
                 <div>
                   <strong class="block text-emerald-800">Simulation: Eligible!</strong>
                   <span class="text-[11px] text-emerald-700">With these hypothetical credentials, you WOULD meet the eligibility criteria for this role.</span>
@@ -324,17 +330,16 @@
           } else {
             whatIfResult.innerHTML = `
               <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 flex items-start gap-2">
-                <i data-lucide="x-circle" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
+                <i class="ph-bold ph-x-circle w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
                 <div class="space-y-1">
                   <strong class="block text-rose-800">Simulation: Ineligible</strong>
                   <ul class="list-disc pl-4 text-[11px] text-rose-700 space-y-0.5">
-                    ${(result.reasons || []).map(r => `<li>${r}</li>`).join('')}
+                    ${(result.reasons || []).map(r => `<li>${escapeHtml(r)}</li>`).join('')}
                   </ul>
                 </div>
               </div>
             `;
           }
-          if (window.lucide) window.lucide.createIcons();
         } catch (err) {
           console.error(err);
         }

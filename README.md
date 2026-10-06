@@ -2,7 +2,7 @@
 
 <a name="top"></a>
 
-<img src="https://capsule-render.vercel.app/api?type=venom&height=240&color=0:7C3AED,50:4F46E5,100:2563EB&text=CampusPlace&fontSize=62&fontColor=FFFFFF&animation=twinkling&fontAlignY=40&desc=Campus%20Placement%20%26%20Internship%20Portal&descAlignY=62&descSize=18" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&height=220&color=0:7C3AED,50:4F46E5,100:2563EB&text=CampusPlace&fontSize=62&fontColor=FFFFFF&animation=twinkling&fontAlignY=40&desc=Campus%20Placement%20and%20Internship%20Portal&descAlignY=62&descSize=18" width="100%"/>
 
 <h3>🎓 A placement portal that explains itself.</h3>
 

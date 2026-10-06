@@ -1,167 +1,478 @@
-# 🎓 CampusPlace: Campus Placement & Internship Portal
+<div align="center">
 
-> **Pitch / USP:** *A placement portal that explains itself.* Transparency for students, speed for recruiters, oversight for admins.
+<a name="top"></a>
 
-A role-based, three-tier, multi-page recruitment platform built with **Node.js, Express, EJS, and SQLite (`better-sqlite3`)**.
+<img src="https://capsule-render.vercel.app/api?type=waving&height=190&color=0:7C3AED,100:2563EB&text=CampusPlace&fontSize=54&fontColor=FFFFFF&animation=fadeIn&fontAlignY=38&desc=Campus%20Placement%20%26%20Internship%20Portal&descAlignY=63&descSize=18" width="100%"/>
+
+<br>
+
+<a href="https://github.com/Ashmit-Pathak018/placement-portal">
+<img src="https://img.shields.io/badge/STATUS-HACKATHON%20BUILD-22c55e?style=for-the-badge" alt="Status">
+</a>
+<a href="https://nodejs.org/">
+<img src="https://img.shields.io/badge/Node.js-18%2B-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
+</a>
+<a href="https://expressjs.com/">
+<img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express">
+</a>
+<a href="https://www.sqlite.org/">
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+</a>
+<a href="https://jestjs.io/">
+<img src="https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white" alt="Jest">
+</a>
+<a href="https://opensource.org/licenses/MIT">
+<img src="https://img.shields.io/badge/License-MIT-facc15?style=for-the-badge" alt="MIT">
+</a>
+
+<br><br>
+
+<h3>A placement portal that explains itself.</h3>
+
+<p>
+<b>Transparency for students.</b>
+&nbsp; · &nbsp;
+<b>Speed for recruiters.</b>
+&nbsp; · &nbsp;
+<b>Oversight for admins.</b>
+</p>
+
+<br>
+
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&size=18&duration=2600&pause=900&color=7C3AED&center=true&vCenter=true&width=750&lines=Know+why+you%27re+eligible.;See+why+a+role+matches+you.;Move+candidates+through+the+pipeline.;Keep+important+decisions+auditable." alt="Typing animation">
+
+<br><br>
+
+<a href="#-what-is-campusplace">What is it?</a>
+&nbsp; • &nbsp;
+<a href="#-why-campusplace">Why?</a>
+&nbsp; • &nbsp;
+<a href="#-features">Features</a>
+&nbsp; • &nbsp;
+<a href="#-architecture">Architecture</a>
+&nbsp; • &nbsp;
+<a href="#-quick-start">Quick Start</a>
+&nbsp; • &nbsp;
+<a href="#-testing">Testing</a>
+
+</div>
 
 ---
 
-## 🌟 Key Highlights & Unique Selling Points (USPs)
+# 🎓 What is CampusPlace?
 
-1. **Eligibility Explainer + What-If Checker**:
-   - Students see an instant breakdown of why they are or aren't eligible for a role before applying.
-   - Interactive What-If simulator allows students to test hypothetical CGPA, branch, or graduation year changes without altering their actual profile.
-2. **Transparent Match Score ("Recommended For You")**:
-   - Rule-based algorithmic scoring (Branch 40% + CGPA margin up to 30% + Grad Year 15% + Deadline Urgency up to 15%).
-   - Full point breakdown presented directly to students ("Why this match?").
-3. **Recruiter Kanban Pipeline (Drag-and-Drop)**:
-   - Visual candidate tracker using SortableJS with real-time status updates and status transition validation.
-   - Table view with multi-select batch status updates executed inside database transactions.
-4. **Application Timeline & Notifications**:
-   - Every status shift records history with timestamp, actor, and feedback notes.
-   - Bell notification system with real-time badge polling (`/api/notifications/unread-count`).
-5. **Placement Cell Admin Dashboard & Analytics**:
-   - Interactive Chart.js charts: placements by branch, applications per company, and average CGPA of offered students.
-   - Transactional company and job posting review queues with audit logs and CSV export.
+**CampusPlace** is a role-based campus placement and internship platform built around one simple idea:
 
----
+> **A recruitment system shouldn't just make decisions. It should explain them.**
 
-## 🔒 Permission Matrix & Role Boundaries
+Instead of turning placements into:
 
-| Action | Student | Recruiter | Admin |
-|:---|:---:|:---:|:---:|
-| Register / Login | ✅ | ✅ | ✅ (Seeded) |
-| Edit Own Student Profile | ✅ | ❌ | ❌ |
-| Browse Approved & Active Postings | ✅ | ❌ | ✅ |
-| Apply to Posting | ✅ (Server-gated) | ❌ | ❌ |
-| Create & Edit Company Profile | ❌ | ✅ (Starts Pending) | ❌ |
-| Create Postings | ❌ | ✅ (Approved Company only) | ❌ |
-| View Applicants & Profiles | ❌ | ✅ (Own Postings only) | ❌ |
-| Update Status (Single / Batch) | ❌ | ✅ (Own Postings only) | ❌ |
-| Review Companies & Postings | ❌ | ❌ | ✅ |
-| View Audit Logs & CSV Export | ❌ | ❌ | ✅ |
-| Analytics Dashboard | ❌ | ❌ | ✅ |
-
-*All authorization is strictly enforced on the server side: every route verifies session identity, role permissions, and resource ownership.*
-
----
-
-## 👥 Mock Credentials (Out of the Box)
-
-| Role | Email | Password | Details & Recommended Test Scenario |
-|---|---|---|---|
-| **Admin** | `admin@campus.edu` | `Admin@123` | Placement Cell Admin: manage queues, audit logs, analytics |
-| **Recruiter 1** | `recruiter1@acme.com` | `Recruit@123` | Approved company (*Acme Technologies*), has postings & applicants |
-| **Recruiter 2** | `recruiter2@globex.com` | `Recruit@123` | Pending company (*Globex Corporation*), cannot post until approved |
-| **Student 1** | `student1@campus.edu` | `Student@123` | CGPA **9.1**, Branch **CSE** — high match scores, has received offers |
-| **Student 2** | `student2@campus.edu` | `Student@123` | CGPA **6.5**, Branch **ECE** — triggers eligibility block notice |
-| **Student 3** | `student3@campus.edu` | `Student@123` | CGPA **8.0**, Branch **CSE** — active applications in review/interview |
-
----
-
-## 🛠 Prerequisites & Installation
-
-- **Node.js** version 18+ (tested on Node 18, 20, 22, 24)
-- **npm** version 9+
-
-### Setup Steps
-
-```bash
-# 1. Clone the repository
-git clone <repo-url>
-cd placement-portal
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure environment
-cp .env.example .env
-
-# 4. Initialize database schema
-npm run db:init
-
-# 5. Populate sample seed data
-npm run seed
-
-# 6. Start the server
-npm start
+```text
+Browse → Apply → Wait
 ```
 
-Open your browser at **`http://localhost:3000`**.
+CampusPlace creates a transparent workflow for:
+
+```text
+Student
+   │
+   ├── Understand eligibility
+   ├── Understand match
+   ├── Apply
+   └── Track progress
+              │
+              ▼
+        Recruiter Pipeline
+              │
+              ▼
+        Admin Oversight
+```
+
+The platform connects three roles:
+
+**🎓 Student · 🧑‍💼 Recruiter · 🏫 Placement Admin**
+
+while enforcing authorization and resource ownership on the server.
 
 ---
 
-## 🧪 Testing Scenarios & Commands
+# 💡 Why CampusPlace?
 
-### 1. Test Scenarios for Graders
+Traditional placement systems often create three problems:
 
-- **Scenario A: Eligibility Gating**:
-  1. Log in as `student2@campus.edu` (CGPA 6.5, ECE).
-  2. Visit `/student/postings/2` (*Data Science Intern*, requires Min CGPA 8.0).
-  3. Notice the red explanatory notice listing all reasons for ineligibility.
-  4. Try to submit an application via HTTP POST (e.g. using curl or dev tools); the server rejects the submission and redirects back with flash error.
-  5. Use the **What-If Checker** at the bottom of the page: enter CGPA 8.5 to see it report *"Would be eligible!"*.
+| Role | Problem | CampusPlace Approach |
+|:---|:---|:---|
+| 🎓 Student | "Why am I not eligible?" | Eligibility explanation + What-If |
+| 🧑‍💼 Recruiter | "Where is everyone in my pipeline?" | Kanban + batch updates |
+| 🏫 Admin | "Who approved this and when?" | Audit logs + approval queues |
 
-- **Scenario B: Recruiter Workflow & Kanban**:
-  1. Log in as `recruiter1@acme.com`.
-  2. Navigate to **Postings** &rarr; **View Applicants** for *Software Engineer*.
-  3. Toggle between **Table View** (with batch update) and **Kanban View**.
-  4. Drag a candidate card to the next stage or update status in the table view.
-  5. Attempt to access postings of another company (blocked server-side).
+### The core philosophy
 
-- **Scenario C: Admin Approval & Audit Logging**:
-  1. Log in as `admin@campus.edu`.
-  2. View **Companies** queue: approve *Globex Corporation*.
-  3. View **Postings** queue: approve pending postings.
-  4. Navigate to **Audit Logs**: verify the approval event, reviewer ID, timestamp, and optional reason.
-  5. Click **Export to CSV** to download the audit log export.
-
-### 2. Automated Test Commands
-
-```bash
-# Run unit & schema tests with Jest
-npm test
-
-# Run end-to-end integration journeys
-node tests/e2e.js
-
-# Run full Section 11 acceptance checklist verification
-node tests/acceptance.js
-```
-
-### 3. Database Reset Command
-
-```bash
-# Drop all tables and re-populate fresh seed data with sequence reset:
-npm run seed:reset
+```text
+                    ┌─────────────────────────┐
+                    │       CAMPUSPLACE       │
+                    └────────────┬────────────┘
+                                 │
+             ┌───────────────────┼───────────────────┐
+             ▼                   ▼                   ▼
+       ┌──────────┐        ┌──────────┐        ┌──────────┐
+       │ STUDENT  │        │RECRUITER │        │  ADMIN   │
+       └────┬─────┘        └────┬─────┘        └────┬─────┘
+            │                   │                   │
+            ▼                   ▼                   ▼
+       Why am I?          Who moves next?      What happened?
+       eligible?           What's pending?     Who approved it?
+            │                   │                   │
+            ▼                   ▼                   ▼
+      Eligibility +        Kanban + batch      Approval +
+       What-If             operations          audit logs
+            │                   │                   │
+            └───────────────────┼───────────────────┘
+                                ▼
+                       Transparent workflow
 ```
 
 ---
 
-## 🗄️ Database Architecture & Entity Relationship (ER)
+# ✨ Features
+
+## 🎓 01 · Eligibility Explainer
+
+Students don't just receive an **eligible / not eligible** result.
+
+They get an explanation.
+
+### Includes
+
+- Instant eligibility breakdown
+- Minimum CGPA checks
+- Branch eligibility
+- Graduation year validation
+- Server-side application gating
+- Human-readable reasons for rejection
+
+### 🔮 What-If Checker
+
+Students can experiment with hypothetical profiles:
+
+> *"What if my CGPA was 8.5?"*
+
+> *"What if I were from CSE?"*
+
+> *"Would I qualify next year?"*
+
+The system evaluates the hypothetical profile **without modifying the real student profile**.
+
+---
+
+## 🎯 02 · Transparent Match Score
+
+CampusPlace doesn't just say:
+
+> **91% Match**
+
+and leave you wondering what that means.
+
+The scoring model exposes the reasoning.
+
+### Score breakdown
+
+| Signal | Weight |
+|:---|---:|
+| Branch match | **40%** |
+| CGPA margin | **up to 30%** |
+| Graduation year | **15%** |
+| Deadline urgency | **up to 15%** |
+
+Example:
+
+```text
+┌───────────────────────────────────────┐
+│          WHY THIS MATCH?              │
+├───────────────────────────────────────┤
+│                                       │
+│  Branch match                 +40     │
+│  CGPA margin                  +27     │
+│  Graduation year              +15     │
+│  Deadline urgency              +9     │
+│                               ───     │
+│  MATCH SCORE                 91/100   │
+│                                       │
+└───────────────────────────────────────┘
+```
+
+**The recommendation explains itself.**
+
+---
+
+## 🧑‍💼 03 · Recruiter Kanban
+
+Recruiters get a visual candidate pipeline powered by **SortableJS**.
+
+```text
+┌────────────┐   ┌────────────┐   ┌────────────┐   ┌────────────┐
+│   APPLIED  │   │   REVIEW   │   │ INTERVIEW  │   │   OFFERED  │
+├────────────┤   ├────────────┤   ├────────────┤   ├────────────┤
+│            │   │            │   │            │   │            │
+│   Maya     │   │   Arjun    │   │   Riya     │   │   Dev      │
+│   9.1 CSE  │   │   8.7 CSE  │   │   8.9 ECE  │   │   9.3 CSE  │
+│            │   │            │   │            │   │            │
+│   Zoya     │   │   Kabir    │   │   Neha     │   │            │
+│   8.4 CSE  │   │   8.6 IT   │   │   8.8 CSE  │   │            │
+│            │   │            │   │            │   │            │
+└────────────┘   └────────────┘   └────────────┘   └────────────┘
+```
+
+### Recruiter tools
+
+- Drag-and-drop candidate pipeline
+- Kanban view
+- Table view
+- Multi-select batch updates
+- Status transition validation
+- Transactional updates
+- Applicant ownership checks
+
+---
+
+## 🔔 04 · Application Timeline & Notifications
+
+Every application has a history.
+
+```text
+Applied
+   │
+   ▼
+Under Review
+   │
+   ▼
+Shortlisted
+   │
+   ▼
+Interview
+   │
+   ├──────────────► Rejected
+   │
+   ▼
+Offered
+```
+
+Every transition records:
+
+```text
+FROM STATUS
+     ↓
+TO STATUS
+     ↓
+WHO CHANGED IT
+     ↓
+WHEN
+     ↓
+OPTIONAL NOTE
+```
+
+Notifications provide unread counts through:
+
+```text
+GET /api/notifications/unread-count
+```
+
+---
+
+## 🏫 05 · Placement Cell Admin Dashboard
+
+Admins get the control center.
+
+### Approval workflows
+
+- Company approvals
+- Job posting approvals
+- Rejection reasons
+- Reviewer tracking
+
+### Analytics
+
+- Placements by branch
+- Applications per company
+- Average CGPA of offered students
+- Interactive Chart.js visualizations
+
+### Auditability
+
+Every important administrative action can be traced through:
+
+```text
+Action
+  │
+  ├── Entity
+  ├── Reviewer
+  ├── Timestamp
+  └── Reason
+```
+
+And yes:
+
+**CSV export included.**
+
+---
+
+# 🔐 Permission Matrix
+
+| Action | 🎓 Student | 🧑‍💼 Recruiter | 🏫 Admin |
+|:--|:--:|:--:|:--:|
+| Register / Login | ✓ | ✓ | ✓ |
+| Edit own profile | ✓ | — | — |
+| Browse postings | ✓ | — | ✓ |
+| Apply | ✓ | — | — |
+| Create company | — | ✓ | — |
+| Create postings | — | ✓ | — |
+| View applicants | — | ✓ | — |
+| Update status | — | ✓ | — |
+| Review companies | — | — | ✓ |
+| Review postings | — | — | ✓ |
+| Audit logs | — | — | ✓ |
+| CSV export | — | — | ✓ |
+| Analytics | — | — | ✓ |
+
+### Server-side enforcement
+
+The UI is **not** the security boundary.
+
+Every protected operation follows:
+
+```text
+Request
+   │
+   ▼
+Session Identity
+   │
+   ▼
+Role Check
+   │
+   ▼
+Resource Ownership
+   │
+   ▼
+Validation
+   │
+   ▼
+Database Operation
+```
+
+---
+
+# 🧪 Demo Accounts
+
+The project comes with seeded accounts so the entire workflow can be demonstrated immediately.
+
+| Role | Email | Password | Demo Purpose |
+|:---|:---|:---|:---|
+| 🏫 **Admin** | `admin@campus.edu` | `Admin@123` | Approvals, audit, analytics |
+| 🧑‍💼 **Recruiter 1** | `recruiter1@acme.com` | `Recruit@123` | Approved company + applicants |
+| 🧑‍💼 **Recruiter 2** | `recruiter2@globex.com` | `Recruit@123` | Pending company workflow |
+| 🎓 **Student 1** | `student1@campus.edu` | `Student@123` | CGPA 9.1 · CSE |
+| 🎓 **Student 2** | `student2@campus.edu` | `Student@123` | CGPA 6.5 · ECE |
+| 🎓 **Student 3** | `student3@campus.edu` | `Student@123` | CGPA 8.0 · CSE |
+
+> These are intentionally seeded development credentials for demonstration and testing.
+
+---
+
+# ⚙️ Tech Stack
+
+<div align="center">
+
+| Layer | Technology |
+|:---|:---|
+| Runtime | **Node.js** |
+| Backend | **Express.js** |
+| Views | **EJS** |
+| Database | **SQLite + better-sqlite3** |
+| Styling | **CSS / Tailwind-based UI** |
+| Drag & Drop | **SortableJS** |
+| Analytics | **Chart.js** |
+| Testing | **Jest + HTTP journeys** |
+| Authentication | **Session-based auth** |
+| Security | **Helmet + CSRF + bcrypt** |
+
+</div>
+
+---
+
+# 🏗️ Architecture
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                         BROWSER                             │
+│                   EJS + CSS + JavaScript                   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               │ HTTP
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    EXPRESS APPLICATION                      │
+│                                                             │
+│  Authentication                                             │
+│        ↓                                                    │
+│  CSRF Protection                                             │
+│        ↓                                                    │
+│  Input Validation                                            │
+│        ↓                                                    │
+│  Role Authorization                                          │
+│        ↓                                                    │
+│  Resource Ownership                                          │
+│        ↓                                                    │
+│  Routes                                                     │
+│                                                             │
+│   ┌──────────┐     ┌───────────┐     ┌──────────┐          │
+│   │ Student  │     │ Recruiter │     │  Admin   │          │
+│   └──────────┘     └───────────┘     └──────────┘          │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                         SERVICES                            │
+│                                                             │
+│ Eligibility │ Match Score │ Applications │ Audit │ Notify  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      SQLite DATABASE                        │
+│                                                             │
+│ Users │ Companies │ Postings │ Applications │ History      │
+│ Notifications │ Audit Logs                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+# 🗄️ Database Model
 
 ```mermaid
 erDiagram
-    users ||--o| student_profiles : "has profile"
-    users ||--o{ companies : "recruiter owns"
-    users ||--o{ applications : "student submits"
-    users ||--o{ admin_audit_logs : "admin logs"
+
+    users ||--o| student_profiles : "has"
+    users ||--o{ companies : "owns"
+    users ||--o{ applications : "submits"
+    users ||--o{ admin_audit_logs : "creates"
     users ||--o{ notifications : "receives"
-    
+
     companies ||--o{ job_postings : "publishes"
-    job_postings ||--o{ posting_departments : "allowed branches"
+
+    job_postings ||--o{ posting_departments : "allows"
     job_postings ||--o{ applications : "receives"
-    
+
     applications ||--o{ application_history : "tracks"
-    
+
     users {
         int id PK
         string email UK
         string password_hash
-        string role "student | recruiter | admin"
+        string role
         datetime created_at
     }
-    
+
     student_profiles {
         int user_id PK,FK
         string name
@@ -170,46 +481,38 @@ erDiagram
         int grad_year
         string resume_url
     }
-    
+
     companies {
         int id PK
         int recruiter_id FK
         string name
         string website
-        text description
-        string status "pending | approved | rejected"
+        string status
         int reviewed_by FK
         datetime reviewed_at
     }
-    
+
     job_postings {
         int id PK
         int company_id FK
         string title
         text description
-        string type "job | internship"
+        string type
         float min_cgpa
         int grad_year
         date deadline
-        string status "pending | approved | rejected | closed"
-        int reviewed_by FK
-        datetime reviewed_at
+        string status
     }
-    
-    posting_departments {
-        int posting_id PK,FK
-        string branch PK
-    }
-    
+
     applications {
         int id PK
         int posting_id FK
         int student_id FK
-        string status "applied | under_review | shortlisted | interview | offered | rejected"
+        string status
         datetime applied_at
         datetime updated_at
     }
-    
+
     application_history {
         int id PK
         int application_id FK
@@ -219,17 +522,17 @@ erDiagram
         datetime changed_at
         text note
     }
-    
+
     admin_audit_logs {
         int id PK
         int admin_id FK
-        string entity_type "company | posting"
+        string entity_type
         int entity_id
-        string action "approved | rejected"
+        string action
         text reason
         datetime created_at
     }
-    
+
     notifications {
         int id PK
         int user_id FK
@@ -242,55 +545,230 @@ erDiagram
 
 ---
 
-## 📂 Project Structure
+# ⚡ Quick Start
 
+### Requirements
+
+- **Node.js 18+**
+- **npm 9+**
+
+### 1. Clone
+
+```bash
+git clone https://github.com/Ashmit-Pathak018/placement-portal.git
+cd placement-portal
 ```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment
+
+```bash
+cp .env.example .env
+```
+
+### 4. Initialize database
+
+```bash
+npm run db:init
+```
+
+### 5. Seed demo data
+
+```bash
+npm run seed
+```
+
+### 6. Start CampusPlace
+
+```bash
+npm start
+```
+
+Open:
+
+**http://localhost:3000**
+
+---
+
+# 🧭 Hackathon Demo Flow
+
+Want to demonstrate the entire system quickly?
+
+```text
+                 ┌─────────────────┐
+                 │  LOGIN STUDENT  │
+                 └────────┬────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Browse Postings   │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Eligibility       │
+                │ Explanation       │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ What-If Checker   │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Match Score       │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Apply             │
+                └─────────┬─────────┘
+                          │
+                          ▼
+                ┌───────────────────┐
+                │ RECRUITER LOGIN   │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Kanban Pipeline   │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Status Transition │
+                └─────────┬─────────┘
+                          │
+                          ▼
+                ┌───────────────────┐
+                │ ADMIN LOGIN       │
+                └─────────┬─────────┘
+                          ▼
+                ┌───────────────────┐
+                │ Approval + Audit  │
+                └───────────────────┘
+```
+
+### The 3-minute pitch
+
+**Student**
+
+> "I don't just want to know whether I'm eligible. I want to know why."
+
+Show:
+
+**Eligibility → What-If → Match Score**
+
+Then:
+
+**Recruiter**
+
+> "I don't want a spreadsheet. I want a pipeline."
+
+Show:
+
+**Kanban → Drag candidate → Batch update**
+
+Then:
+
+**Admin**
+
+> "Every important decision should be traceable."
+
+Show:
+
+**Approval → Audit Log → CSV Export**
+
+That's CampusPlace.
+
+---
+
+# 🧪 Testing
+
+### Unit + schema tests
+
+```bash
+npm test
+```
+
+### End-to-end journey
+
+```bash
+node tests/e2e.js
+```
+
+### Acceptance checklist
+
+```bash
+node tests/acceptance.js
+```
+
+### Fresh database reset
+
+```bash
+npm run seed:reset
+```
+
+---
+
+# 📁 Project Structure
+
+```text
 placement-portal/
+│
 ├── public/
 │   ├── css/
-│   │   └── style.css            # Responsive styling, badges, Kanban, alerts
+│   │   └── style.css
 │   └── js/
-│       └── app.js              # Client-side notifications polling & helpers
+│       └── app.js
+│
 ├── src/
-│   ├── app.js                  # Main Express app, middleware stack, error handling
+│   ├── app.js
+│   │
 │   ├── config/
-│   │   └── index.js            # Environment config, constants, status transitions
+│   │   └── index.js
+│   │
 │   ├── db/
-│   │   ├── index.js            # SQLite database connection singleton
-│   │   ├── schema.sql          # Complete DDL schema, constraints, and indexes
-│   │   ├── init.js             # Schema initialization runner
-│   │   └── seed.js             # Realistic mock data population script
+│   │   ├── index.js
+│   │   ├── schema.sql
+│   │   ├── init.js
+│   │   └── seed.js
+│   │
 │   ├── middleware/
-│   │   ├── auth.js             # Session authentication guard
-│   │   ├── requireRole.js      # Role-based authorization & 403 response
-│   │   ├── csrf.js             # CSRF token protection
-│   │   └── validate.js         # Input validation & error flashing
+│   │   ├── auth.js
+│   │   ├── requireRole.js
+│   │   ├── csrf.js
+│   │   └── validate.js
+│   │
 │   ├── services/
-│   │   ├── eligibility.js      # Server-side eligibility gating & What-If checker
-│   │   ├── matchScore.js       # Transparent match scoring algorithm
-│   │   ├── applications.js     # Single/batch status transitions & history
-│   │   ├── audit.js            # Transactional admin approvals & audit logging
-│   │   └── notifications.js    # In-app notifications & unread counts
+│   │   ├── eligibility.js
+│   │   ├── matchScore.js
+│   │   ├── applications.js
+│   │   ├── audit.js
+│   │   └── notifications.js
+│   │
 │   ├── routes/
-│   │   ├── auth.js             # Register, login, logout
-│   │   ├── student.js          # Profile, browse jobs, apply gate, what-if
-│   │   ├── recruiter.js        # Company, postings CRUD, Kanban & applicants
-│   │   ├── admin.js            # Dashboard, approvals, audit logs, CSV export
-│   │   └── api.js              # JSON polling endpoints
+│   │   ├── auth.js
+│   │   ├── student.js
+│   │   ├── recruiter.js
+│   │   ├── admin.js
+│   │   └── api.js
+│   │
 │   └── views/
-│       ├── layouts/main.ejs    # Master layout template
-│       ├── partials/           # Navbar, flash alerts, footer
-│       ├── auth/               # Login & Register views
-│       ├── student/            # Dashboard, profile, postings, detail, applications
-│       ├── recruiter/          # Company profile, postings, Kanban & applicants
-│       ├── admin/              # Dashboard, pending queues, audit logs
-│       └── errors/             # 403 Forbidden & 404 Not Found pages
+│       ├── layouts/
+│       ├── partials/
+│       ├── auth/
+│       ├── student/
+│       ├── recruiter/
+│       ├── admin/
+│       └── errors/
+│
 ├── tests/
-│   ├── core.test.js            # Eligibility rules, transitions, match scores (Jest)
-│   ├── db.test.js              # Schema integrity & UNIQUE constraint tests (Jest)
-│   ├── permissions.test.js     # Role verification tests (Jest)
-│   ├── e2e.js                  # End-to-end multi-role HTTP journey test
-│   └── acceptance.js           # Spec Section 11 acceptance checklist verification
+│   ├── core.test.js
+│   ├── db.test.js
+│   ├── permissions.test.js
+│   ├── e2e.js
+│   └── acceptance.js
+│
 ├── .env.example
 ├── package.json
 └── README.md
@@ -298,17 +776,164 @@ placement-portal/
 
 ---
 
-## 🛡️ Security Hardening
+# 🛡️ Security
 
-- **Session Security**: Session cookies with `httpOnly: true`, customizable secret, secure flag in production.
-- **CSRF Defense**: All POST, PUT, DELETE operations require a valid CSRF token.
-- **Password Protection**: Passwords hashed with bcrypt (cost factor 10).
-- **Helmet Middleware**: Configured with security headers for XSS, MIME sniffing, clickjacking protection.
-- **SQL Injection Prevention**: 100% prepared statements via `better-sqlite3`.
-- **Server-Side Authorization**: Every endpoint asserts role access and resource ownership.
+CampusPlace treats the browser as **untrusted**.
+
+### Current hardening
+
+- `httpOnly` session cookies
+- Configurable session secret
+- Secure cookies in production
+- CSRF protection
+- bcrypt password hashing
+- Helmet security headers
+- Prepared SQL statements through `better-sqlite3`
+- Server-side role authorization
+- Resource ownership checks
+- Input validation
+- Transactional application updates
+- Transactional admin approvals
+- Audit logging
+
+The important distinction:
+
+```text
+Frontend restriction ≠ Security
+
+Server-side authorization = Security boundary
+```
 
 ---
 
-## 📜 License
+# 🧠 Design Principles
 
-MIT License.
+### Explainability over mystery
+
+If the system makes a recommendation, show the reasoning.
+
+### Server-side enforcement
+
+UI restrictions are helpful.
+
+They are not security boundaries.
+
+### Auditability
+
+Important administrative actions should leave a trail.
+
+### Transactional state changes
+
+Application and approval workflows shouldn't end up half-updated.
+
+### Separation of concerns
+
+Routes handle HTTP concerns.
+
+Services handle business logic.
+
+The database layer handles persistence.
+
+### Small delightful details
+
+Because enterprise software doesn't have to look like it was designed in 2007.
+
+---
+
+# 🗺️ Roadmap
+
+```text
+FOUNDATION
+[✓] Authentication
+[✓] Role boundaries
+[✓] Student profiles
+[✓] Recruiter companies
+[✓] Job postings
+
+STUDENT EXPERIENCE
+[✓] Eligibility engine
+[✓] Eligibility explanations
+[✓] What-If simulator
+[✓] Match scoring
+[✓] Application tracking
+[✓] Notifications
+
+RECRUITER EXPERIENCE
+[✓] Applicant pipeline
+[✓] Kanban
+[✓] Table view
+[✓] Batch updates
+[✓] Status history
+
+ADMIN EXPERIENCE
+[✓] Approval queues
+[✓] Audit logs
+[✓] CSV export
+[✓] Analytics
+
+ENGINEERING
+[✓] Input validation
+[✓] CSRF protection
+[✓] SQL parameterization
+[✓] Permission tests
+[✓] E2E testing
+[✓] Acceptance tests
+
+NEXT
+[ ] Production deployment
+[ ] Resume storage
+[ ] Email notifications
+[ ] Institution-wide configuration
+[ ] Advanced recommendation models
+```
+
+---
+
+# 🌱 The Idea Behind It
+
+CampusPlace started as a placement portal.
+
+The more we built, the more obvious the real problem became:
+
+**Recruitment systems make people interact with decisions they don't understand.**
+
+So the project became an attempt to make the workflow more transparent.
+
+A student should understand:
+
+> **Why am I eligible?**
+
+A recruiter should understand:
+
+> **Who needs attention?**
+
+An administrator should understand:
+
+> **Who changed what, and when?**
+
+That is CampusPlace.
+
+---
+
+<div align="center">
+
+## Built for campus recruitment.
+### Designed around clarity.
+
+<br>
+
+<a href="#top">
+<img src="https://img.shields.io/badge/↑%20Back%20to%20top-7C3AED?style=for-the-badge" alt="Back to top">
+</a>
+
+<br><br>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&height=110&color=0:2563EB,100:7C3AED&section=footer" width="100%"/>
+
+</div>
+
+<!--
+CampusPlace
+Campus Placement & Internship Portal
+MIT License
+-->
